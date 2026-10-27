@@ -27,6 +27,8 @@ OFFLINE=1 .venv/bin/jev-navi run --config configs/r2rce_offline.yaml \
 正式数据导入时换成官方episodes与可选的dense GT文件，保持scenes-root为data/scene_datasets。
 缺场景会输出精确路径；prepare命令仍保存清单并返回2，run在策略运行前拒绝缺失资源。
 没有GT时nDTW为null并报告覆盖率，不以稀疏reference_path代替。
+可用 `check-r2rce --suite PATH [--require-ndtw]` 复查源哈希、场景文件、目标及GT覆盖率；
+该命令不初始化预算、不发送模型请求。见[正式数据预检](docs/r2rce_data_readiness.md)。
 
 原首轮预算固定记录483/500且关闭；新阶段0/offline。真实请求必须使用显式live配置和持久阶段额度，
 free_quota_confirmed单独设为true不会打开网络。旧探针使用内存预算时会被请求层拒绝。

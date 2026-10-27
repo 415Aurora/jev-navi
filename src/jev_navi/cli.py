@@ -96,10 +96,21 @@ def main(argv=None):
     p.add_argument("--gt")
     p.add_argument("--source-kind", choices=["official", "fixture"], default="official")
     p.add_argument("--output", required=True)
+    p = commands.add_parser(
+        "check-r2rce", help="Check prepared task files and GT coverage without model calls"
+    )
+    p.add_argument("--suite", required=True)
+    p.add_argument("--require-ndtw", action="store_true")
     commands.add_parser("budget-status", help="Show shared phase accounting, no model calls")
     args = parser.parse_args(argv)
     try:
-        if args.command == "prepare-r2rce":
+        if args.command == "check-r2rce":
+            from .readiness import check_r2rce
+
+            result = check_r2rce(_load(args.suite), require_ndtw=args.require_ndtw)
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+            return 0 if result["ready"] else 2
+        elif args.command == "prepare-r2rce":
             from .datasets import prepare_r2rce
             from .runner import write_json
 
