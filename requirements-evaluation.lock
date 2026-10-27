@@ -1,0 +1,3 @@
+# Policy runtime plus the upstream approximate-DTW implementation.
+-r requirements-policy.lock
+fastdtw==0.3.4

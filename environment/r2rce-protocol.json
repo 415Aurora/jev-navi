@@ -1,0 +1,43 @@
+{
+  "protocol_id": "r2rce_v13_dev",
+  "upstream": {
+    "repository": "https://github.com/jacobkrantz/VLN-CE",
+    "revision": "729d141b2ee10628061ada74dd3a5b9f70faeba5",
+    "task_config": "habitat_extensions/config/vlnce_task.yaml",
+    "metric_config": "habitat_extensions/config/default.py",
+    "metrics": "habitat_extensions/measures.py",
+    "habitat_reference_tag": "v0.1.7",
+    "habitat_defaults": "https://github.com/facebookresearch/habitat-lab/blob/v0.1.7/habitat/config/default.py"
+  },
+  "parameters": {
+    "max_execution_steps_including_stop": 500,
+    "forward_m": 0.25,
+    "turn_deg": 15,
+    "rgb_size": [
+      224,
+      224
+    ],
+    "depth_size": [
+      256,
+      256
+    ],
+    "hfov_deg": 90,
+    "camera_height_m": 1.25,
+    "agent_radius_m": 0.1,
+    "agent_height_m": 1.5,
+    "allow_sliding": true,
+    "success_distance_m": 3.0,
+    "success_comparison": "strict_less_than",
+    "depth_pitch_deg": 0,
+    "ndtw_algorithm": "fastdtw",
+    "fastdtw_version": "0.3.4"
+  },
+  "engineering_deviations": [
+    "Runtime Habitat Lab/Sim 0.3.3, not original 0.1.7; modern navmesh construction can differ.",
+    "Depth is metric axial distance (0..10m), instead of normalized depth, before the private guard.",
+    "No shortest-path/oracle-progress sensor enters policy inputs.",
+    "Optional depth guard and loop termination belong to the agent method, not official metric success.",
+    "An additional decision budget counts semantic no-ops and depth rejections.",
+    "depth30 protocol is a separately named sensor variant."
+  ]
+}
