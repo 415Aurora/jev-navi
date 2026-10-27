@@ -23,6 +23,12 @@ def _identity(row):
 
 
 def summarize(rows, manifest=None):
+    if (manifest or {}).get("suite", {}).get("schema_version") == 2 or any(
+        r["metadata"].get("task_family") == "r2rce" for r in rows
+    ):
+        from .route_reporting import summarize_routes
+
+        return summarize_routes(rows, manifest)
     groups = defaultdict(list)
     for row in rows:
         m = row["metadata"]
@@ -70,6 +76,8 @@ def summarize(rows, manifest=None):
         if r["environment_kind"] == "habitat"
         and r["metadata"].get("annotation_verified") is True
         and r["metadata"].get("policy_kind") not in ("scripted", "replay")
+        and r["metadata"].get("measurement_kind") != "fixture"
+        and not r["metadata"].get("policy_kind", "").endswith("_fixture")
         and len(r.get("models", [])) == 1
     ]
     paired, gates = [], []
@@ -210,6 +218,8 @@ def summarize(rows, manifest=None):
         "fixture_rows": sum(
             r["environment_kind"] != "habitat"
             or r["metadata"].get("policy_kind") in ("scripted", "replay")
+            or r["metadata"].get("measurement_kind") == "fixture"
+            or r["metadata"].get("policy_kind", "").endswith("_fixture")
             for r in rows
         ),
         "unidentified_model_failures": sum(
@@ -235,6 +245,15 @@ def write_report(root):
     with (root / "episodes.csv").open("w", newline="") as handle:
         fields = [
             "episode_id",
+            "repeat_id",
+            "protocol_id",
+            "executed_steps",
+            "fixture_requests",
+            "sr",
+            "spl",
+            "ne",
+            "os",
+            "ndtw",
             "split",
             "condition",
             "task_type",
@@ -252,7 +271,7 @@ def write_report(root):
         writer = csv.DictWriter(handle, fields, extrasaction="ignore")
         writer.writeheader()
         for row in rows:
-            writer.writerow({**row, **row["metadata"]})
+            writer.writerow({**row, **row.get("benchmark_metrics", {}), **row["metadata"]})
     lines = [
         "# Navigation diagnostic report",
         "",
@@ -274,6 +293,34 @@ def write_report(root):
             f"| {g['policy']} / {', '.join(g['models'])} | {g['split']} | {g['condition']} | "
             f"{g['episodes']} | {g['success_rate']:.3f} | {g['mean_path_length']:.3f} | {g['collisions']} |"
         )
+    if (manifest or {}).get("suite", {}).get("schema_version") == 2:
+        lines += [
+            "",
+            "## Route metrics and coverage",
+            "",
+            "SR requires STOP and strict distance < 3m. Missing nDTW is null, not zero.",
+            "The Habitat 0.3.3 port is engineering validation, not an original 0.1.7 replication.",
+            f"Planned jobs: {summary['planned_jobs']}; completed: {summary['completed_jobs']}; "
+            f"unrunnable: {len(summary['unrunnable_jobs'])}.",
+            "",
+            "~~~json",
+            json.dumps(
+                [
+                    {
+                        "policy": g["policy"],
+                        "condition": g["condition"],
+                        "metrics": g["metrics"],
+                        "coverage": g["metric_coverage"],
+                        "unavailable": g["ndtw_unavailable_reasons"],
+                    }
+                    for g in summary["groups"]
+                ],
+                ensure_ascii=False,
+                indent=2,
+            ),
+            "~~~",
+            "",
+        ]
     lines += [
         "",
         "## Paired comparisons",

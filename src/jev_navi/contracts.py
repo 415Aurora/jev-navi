@@ -7,8 +7,8 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
-from .experiments import dependencies, make_policy
-from .providers import PROMPT_VERSION, CallBudget
+from .experiments import dependencies, make_policy, make_run_budget
+from .providers import PROMPT_VERSION
 from .runner import write_json
 from .types import Observation, PolicyInput, ServiceError
 
@@ -29,7 +29,7 @@ def run_contract(config, image_paths, instruction, output):
     ]
     output = Path(output)
     output.mkdir(parents=True, exist_ok=False)
-    budget = CallBudget(24)
+    budget = make_run_budget(config, 24)
     policy = make_policy(config["policy"], budget)
     records = []
     try:

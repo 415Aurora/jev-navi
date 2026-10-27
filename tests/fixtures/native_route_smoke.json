@@ -1,0 +1,92 @@
+{
+  "description": "Software fixture in public test scenes; not R2R-CE episodes or model evidence.",
+  "episodes": [
+    {
+      "episode_id": "fixture-skokloster-castle",
+      "trajectory_id": "software-skokloster-castle",
+      "scene_id": "skokloster-castle.glb",
+      "instruction": {
+        "instruction_text": "Turn left. Move forward. Stop."
+      },
+      "start_position": [
+        2.7936859130859375,
+        0.1181827187538147,
+        19.877243041992188
+      ],
+      "start_rotation": [
+        0.0,
+        0.7071067811865476,
+        0.0,
+        -0.7071067811865475
+      ],
+      "goals": [
+        {
+          "position": [
+            4.146816253662109,
+            0.05452822148799896,
+            18.131938934326172
+          ],
+          "radius": 3.0
+        }
+      ]
+    },
+    {
+      "episode_id": "fixture-van-gogh-room",
+      "trajectory_id": "software-van-gogh-room",
+      "scene_id": "van-gogh-room.glb",
+      "instruction": {
+        "instruction_text": "Turn left. Move forward. Stop."
+      },
+      "start_position": [
+        2.7108311653137207,
+        0.1766992211341858,
+        0.5645077228546143
+      ],
+      "start_rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "goals": [
+        {
+          "position": [
+            2.9381375312805176,
+            0.1766992211341858,
+            -0.9406942129135132
+          ],
+          "radius": 3.0
+        }
+      ]
+    },
+    {
+      "episode_id": "fixture-apartment_1",
+      "trajectory_id": "software-apartment_1",
+      "scene_id": "apartment_1.glb",
+      "instruction": {
+        "instruction_text": "Turn left. Move forward. Stop."
+      },
+      "start_position": [
+        5.509199142456055,
+        -1.6002482175827026,
+        6.322789192199707
+      ],
+      "start_rotation": [
+        0.0,
+        1.0,
+        0.0,
+        6.123233995736766e-17
+      ],
+      "goals": [
+        {
+          "position": [
+            5.906232833862305,
+            -1.6002482175827026,
+            6.839814186096191
+          ],
+          "radius": 3.0
+        }
+      ]
+    }
+  ]
+}

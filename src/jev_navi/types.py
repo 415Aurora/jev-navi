@@ -55,6 +55,7 @@ class PolicyInput:
     frames: tuple[Observation, ...]
     history: tuple[Feedback, ...]
     recovery_context: str = ""
+    memory: dict = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -65,6 +66,9 @@ class Decision:
     raw: dict = field(default_factory=dict)
     latency_s: float = 0.0
     usage: dict = field(default_factory=dict)
+    execute: bool = True
+    control_reason: str = ""
+    semantic_state: dict = field(default_factory=dict)
 
 
 class ServiceError(Exception):

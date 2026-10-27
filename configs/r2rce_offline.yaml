@@ -1,0 +1,13 @@
+# Software fixture only; never a real model or benchmark measurement.
+protocol_id: r2rce_v13_dev
+environment: {backend: habitat}
+policy:
+  kind: startlux_hierarchical_fixture
+  think_mode: auto
+  responses: tests/fixtures/startlux_route_responses.json
+run: {max_decisions: 12, max_steps: 500, call_limit: 64, seed: 17}
+execution:
+  mode: offline
+  phase_id: r2rce-offline-v1
+  ledger: runs/request-ledger.sqlite3
+conditions: [full]

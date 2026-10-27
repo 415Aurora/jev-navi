@@ -87,9 +87,43 @@ def main(argv=None):
     p.add_argument("--images", nargs="+", required=True)
     p.add_argument("--instruction", required=True)
     p.add_argument("--output", required=True)
+    p = commands.add_parser(
+        "prepare-r2rce", help="Prepare official-format tasks without model calls"
+    )
+    p.add_argument("--episodes", required=True)
+    p.add_argument("--scenes-root", required=True)
+    p.add_argument("--split", required=True, choices=["train", "val_seen", "val_unseen", "test"])
+    p.add_argument("--gt")
+    p.add_argument("--source-kind", choices=["official", "fixture"], default="official")
+    p.add_argument("--output", required=True)
+    commands.add_parser("budget-status", help="Show shared phase accounting, no model calls")
     args = parser.parse_args(argv)
     try:
-        if args.command == "configure-bamboo":
+        if args.command == "prepare-r2rce":
+            from .datasets import prepare_r2rce
+            from .runner import write_json
+
+            output = Path(args.output)
+            if output.exists():
+                raise ValueError("Output already exists")
+            suite = prepare_r2rce(
+                args.episodes, args.scenes_root, args.split, args.gt, source_kind=args.source_kind
+            )
+            output.parent.mkdir(parents=True, exist_ok=True)
+            write_json(output, suite)
+            result = {
+                "prepared": str(output),
+                "episodes": len(suite["episodes"]),
+                "missing_scenes": suite["missing_scenes"],
+                "http_requests": 0,
+            }
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+            return 2 if suite["missing_scenes"] else 0
+        elif args.command == "budget-status":
+            from .budget import initialize_ledger
+
+            result = initialize_ledger(project / "runs/request-ledger.sqlite3")
+        elif args.command == "configure-bamboo":
             key = os.environ.get("BAMBOO_API_KEY") or getpass.getpass("Bamboo API key: ")
             save_bamboo_credentials(project / ".env", key)
             result = {"saved": True, "path": str(project / ".env"), "mode": "0600"}

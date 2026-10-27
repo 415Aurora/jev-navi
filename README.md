@@ -2,7 +2,35 @@
 
 本项目实现语言目标 → RGB 与短历史 → 冻结模型动作提议 → 米制深度拦截 → Habitat 单步执行的闭环。首阶段研究局部语义导航；完整 VLN、R2R-CE 和 G1/SONIC 迁移留待后续验证。
 
-**脚本策略、动作回放和合成环境只用于软件验证，不能当作模型导航结果。当前没有真实模型 API 实验结果。**
+**脚本、回放、合成环境和预设API响应只用于软件验证。此前真实StartLux六任务实验均为0/6；本轮离线原型不提供新的模型导航成绩。**
+
+## 当前阶段：完整路线接口与离线分层原型
+
+现已接入R2R-CE v1-3格式，增加500步控制、独立RGB/深度尺寸、私有评测和StartLux-only有限语义分层。
+当前运行环境仍是Habitat0.3.3工程移植；官方0.1.7复现和真实MP3D评测尚未完成。
+原三个测试场景属于已暴露开发夹具，不是新的留出场景。
+
+~~~bash
+# 上游nDTW采用固定fastdtw实现；无需下载模型
+.venv/bin/python -m pip install -r requirements-evaluation.lock
+
+# 原生三场景软件闭环：使用预设响应，真实模型请求为0
+OFFLINE=1 .venv/bin/jev-navi prepare-r2rce \
+  --episodes tests/fixtures/native_route_smoke.json \
+  --scenes-root data/scene_datasets --split train --source-kind fixture \
+  --output runs/r2rce-offline-native-suite-NEW.json
+OFFLINE=1 .venv/bin/jev-navi run --config configs/r2rce_offline.yaml \
+  --suite runs/r2rce-offline-native-suite-NEW.json --output runs/r2rce-offline-native-NEW
+.venv/bin/jev-navi budget-status
+~~~
+
+正式数据导入时换成官方episodes与可选的dense GT文件，保持scenes-root为data/scene_datasets。
+缺场景会输出精确路径；prepare命令仍保存清单并返回2，run在策略运行前拒绝缺失资源。
+没有GT时nDTW为null并报告覆盖率，不以稀疏reference_path代替。
+
+原首轮预算固定记录483/500且关闭；新阶段0/offline。真实请求必须使用显式live配置和持久阶段额度，
+free_quota_confirmed单独设为true不会打开网络。旧探针使用内存预算时会被请求层拒绝。
+完整设计、限制及复现说明见[离线阶段说明](docs/r2rce_offline_2026-10-27.md)。
 
 ## 环境与快速运行
 
@@ -36,7 +64,7 @@ bash scripts/setup_habitat.sh
 
 实际安装为 **Habitat-Sim 0.3.3 + Habitat-Lab 0.3.3 + Python 3.9.23**。计划中的 0.3.4/Python 3.11 组合存在官方包与依赖兼容问题，详情、锁文件和源提交见 [环境说明](docs/environment.md) 与 [版本清单](environment/source-manifest.json)。不把本环境的结果直接等同于原始 Habitat 0.1.7 的 R2R-CE 结果。
 
-## 真实模型接口
+## 真实模型接口（历史基线与后续启用条件）
 
 已实现 StartLux/Bamboo 与 inference.sh d3-mini 两种适配器。输入图像为 PNG data URI，严格按旧到新排列。模型选择取四种动作概率的最大值，保存完整原始响应；不把概率解释为导航安全置信度。
 

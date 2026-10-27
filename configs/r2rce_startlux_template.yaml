@@ -1,0 +1,10 @@
+protocol_id: r2rce_v13_dev
+free_quota_confirmed: false
+environment: {backend: habitat}
+policy: {kind: startlux_hierarchical, think_mode: auto}
+run: {max_decisions: 500, max_steps: 500, call_limit: 500, seed: 17}
+execution:
+  mode: offline
+  phase_id: r2rce-offline-v1
+  ledger: runs/request-ledger.sqlite3
+conditions: [full]

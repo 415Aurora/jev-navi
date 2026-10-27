@@ -29,6 +29,9 @@ class HabitatEnvironment:
         allow_sliding=False,
         seed=17,
         depth_pitch_deg=0.0,
+        depth_camera=None,
+        max_episode_steps=61,
+        success_strict=False,
     ):
         # Optional native dependencies are imported only when this backend is selected.
         import habitat
@@ -38,6 +41,10 @@ class HabitatEnvironment:
 
         if not np.isfinite(depth_pitch_deg) or not 0 <= depth_pitch_deg <= 60:
             raise ValueError("Depth downward pitch must be between 0 and 60 degrees")
+        if type(max_episode_steps) is not int or not 1 <= max_episode_steps <= 500:
+            raise ValueError("Invalid environment step limit")
+        depth_camera = SimpleNamespace(**depth_camera) if depth_camera else camera
+        self.success_strict = success_strict
         scene = str(Path(episode["scene"]).expanduser().resolve())
         if not Path(scene).is_file():
             raise ValueError(f"Scene does not exist: {scene}")
@@ -45,7 +52,7 @@ class HabitatEnvironment:
         with read_write(config):
             h = config.habitat
             h.seed = seed
-            h.environment.max_episode_steps = 61  # outer loop enforces decision cap incl vetoes
+            h.environment.max_episode_steps = max_episode_steps
             h.environment.iterator_options.shuffle = False
             h.simulator.forward_step_size = forward_m
             h.simulator.turn_angle = int(turn_deg)
@@ -58,6 +65,10 @@ class HabitatEnvironment:
                 sensor.width, sensor.height = camera.width, camera.height
                 sensor.hfov = int(camera.hfov_deg)
                 sensor.position = [0.0, camera.height_m, 0.0]
+            ds = agent.sim_sensors.depth_sensor
+            ds.width, ds.height = depth_camera.width, depth_camera.height
+            ds.hfov = int(depth_camera.hfov_deg)
+            ds.position = [0.0, depth_camera.height_m, 0.0]
             agent.sim_sensors.depth_sensor.orientation = [
                 -float(np.deg2rad(depth_pitch_deg)),
                 0.0,
@@ -103,7 +114,8 @@ class HabitatEnvironment:
             self._path_length += float(np.linalg.norm(position - self._last_position))
         self._last_position = position
         distance = float(self.env.get_metrics()["distance_to_goal"])
-        self._ever_reached |= np.isfinite(distance) and distance <= self.radius
+        reached = distance < self.radius if self.success_strict else distance <= self.radius
+        self._ever_reached |= np.isfinite(distance) and reached
 
     def reset(self):
         self.step = 0
@@ -123,6 +135,8 @@ class HabitatEnvironment:
         return self._depth.copy()
 
     def execute(self, action):
+        if self.env.episode_over:
+            raise RuntimeError("Environment already terminated")
         action_id = {
             "STOP": "stop",
             "MOVE_FORWARD": "move_forward",
@@ -140,7 +154,11 @@ class HabitatEnvironment:
         metrics = self.env.get_metrics()
         distance = float(metrics["distance_to_goal"])
         return {
-            "success": bool(stopped and distance <= self.radius),
+            "success": bool(
+                stopped
+                and (distance < self.radius if self.success_strict else distance <= self.radius)
+            ),
+            "environment_done": bool(self.env.episode_over),
             "ever_reached": bool(self._ever_reached),
             "distance_to_goal": distance,
             "path_length": self._path_length,

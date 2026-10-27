@@ -1,0 +1,38 @@
+[
+  {
+    "choices": {
+      "boundary_0": "split",
+      "boundary_1": "split"
+    }
+  },
+  {
+    "choices": {
+      "progress": "continue",
+      "action": "TURN_LEFT"
+    }
+  },
+  {
+    "choices": {
+      "progress": "complete",
+      "action": "TURN_RIGHT"
+    }
+  },
+  {
+    "choices": {
+      "progress": "continue",
+      "action": "MOVE_FORWARD"
+    }
+  },
+  {
+    "choices": {
+      "progress": "complete",
+      "action": "MOVE_FORWARD"
+    }
+  },
+  {
+    "choices": {
+      "progress": "complete",
+      "action": "STOP"
+    }
+  }
+]

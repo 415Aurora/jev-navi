@@ -97,6 +97,7 @@ class RemotePolicy:
         self._key = api_key
         self.client = client or httpx.Client(timeout=timeout, follow_redirects=False)
         self._owns_client = client is None
+        self.is_fixture = isinstance(getattr(self.client, "_transport", None), httpx.MockTransport)
         self.budget = budget if budget is not None else CallBudget()
         self.timeout = timeout
         self.calls = 0
@@ -109,6 +110,10 @@ class RemotePolicy:
     def _request(self, method, url, payload=None, *, inference=False, deadline=None):
         # A failed inference POST may already have been accepted by a provider. We count
         # every submission, and never claim exactly-once billing across transport retries.
+        if not self.is_fixture and not getattr(self.budget, "persistent", False):
+            raise ServiceError(
+                "offline_mode", "Real HTTP requires an explicitly enabled persistent phase budget"
+            )
         for attempt in range(2):
             remaining = self.timeout if deadline is None else deadline - time.monotonic()
             if remaining <= 0:
@@ -157,42 +162,88 @@ class RemotePolicy:
 
 
 class StartLuxPolicy(RemotePolicy):
-    def __init__(self, api_key, *, endpoint="http://127.0.0.1:8090/v1/systemone", **kwargs):
+    def __init__(
+        self,
+        api_key,
+        *,
+        endpoint="http://127.0.0.1:8090/v1/systemone",
+        think_mode="never",
+        **kwargs,
+    ):
+        if think_mode not in ("never", "auto", "always"):
+            raise ValueError("Invalid think_mode")
         super().__init__(api_key, **kwargs)
         self.endpoint = endpoint
+        self.think_mode = think_mode
+
+    def ask(self, view, questions, *, extra_state=""):
+        if not 1 <= len(view.frames) <= 8 or not 1 <= len(questions) <= 32:
+            raise ValueError("Unsupported image or question count")
+        for name, question in questions.items():
+            criteria = question.get("criteria")
+            if (
+                not isinstance(name, str)
+                or not isinstance(criteria, dict)
+                or not criteria
+                or question.get("type") != "choice"
+                or any(
+                    not isinstance(k, str) or not k or not isinstance(v, str)
+                    for k, v in criteria.items()
+                )
+            ):
+                raise ValueError("Expected named finite choice questions")
+        payload = {
+            "model": "startlux-decision-27b-autothink",
+            "state": state_text(view, image_markers=True)
+            + ("\n" + extra_state if extra_state else ""),
+            "images": encode_images(view),
+            "questions": questions,
+            "think_mode": self.think_mode,
+            "allow_none": False,
+            "none_check": True,
+        }
+        raw = self._request("POST", self.endpoint, payload, inference=True)
+        try:
+            if not isinstance(raw["model"], str) or not raw["model"]:
+                raise ValueError()
+            if set(raw["answers"]) != set(questions):
+                raise ValueError()
+            selections, distributions = {}, {}
+            for name, question in questions.items():
+                options = question["criteria"]
+                values = raw["answers"][name]["probabilities"]
+                if not isinstance(values, dict) or set(values) != set(options):
+                    raise ValueError()
+                values = {k: float(v) for k, v in values.items()}
+                if any(
+                    not math.isfinite(v) or not 0 <= v <= 1 for v in values.values()
+                ) or not math.isclose(sum(values.values()), 1.0, abs_tol=0.02):
+                    raise ValueError()
+                distributions[name] = values
+                selections[name] = max(options, key=values.__getitem__)
+        except (KeyError, TypeError, ValueError, OverflowError):
+            raise ServiceError("invalid_response") from None
+        return raw, selections, distributions
 
     def decide(self, view):
         start = time.monotonic()
-        payload = {
-            "model": "startlux-decision-27b-autothink",
-            "state": state_text(view, image_markers=True),
-            "images": encode_images(view),
-            "questions": {
+        raw, selected, distributions = self.ask(
+            view,
+            {
                 "action": {
                     "type": "choice",
                     "instructions": ACTION_QUESTION,
                     "criteria": ACTION_DESCRIPTIONS,
                 }
             },
-            "think_mode": "never",
-            "allow_none": False,
-            "none_check": True,
-        }
-        raw = self._request("POST", self.endpoint, payload, inference=True)
-        try:
-            probabilities = parse_probabilities(raw["answers"]["action"]["probabilities"])
-            model = raw["model"]
-            if not isinstance(model, str) or not model:
-                raise ValueError()
-        except (KeyError, TypeError, ValueError):
-            raise ServiceError(
-                "invalid_response", "Missing action probabilities or model ID"
-            ) from None
-        # Selection is deliberately defined from the recorded distribution, not a
-        # potentially inconsistent provider 'choice' field. Ties follow enum order.
-        action = max(Action, key=lambda x: probabilities[x.value])
+        )
         return Decision(
-            action, model, probabilities, raw, time.monotonic() - start, raw.get("usage", {})
+            Action(selected["action"]),
+            raw["model"],
+            distributions["action"],
+            raw,
+            time.monotonic() - start,
+            raw.get("usage", {}),
         )
 
 
