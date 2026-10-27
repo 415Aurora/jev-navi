@@ -16,6 +16,10 @@ def write_json(path, data):
     Path(path).write_text(json.dumps(data, ensure_ascii=False, indent=2, allow_nan=False) + "\n")
 
 
+class EpisodeInitializationError(RuntimeError):
+    """Environment cannot start; no policy decision has been attempted."""
+
+
 def run_episode(
     env,
     policy,
@@ -46,6 +50,13 @@ def run_episode(
         raise ValueError("Invalid execution-step budget")
     monitor = LoopMonitor(**(recovery or {}))
     output = Path(output)
+    if output.exists():
+        raise FileExistsError(output)
+    try:
+        observation = env.reset()
+        initial_evaluation = env.evaluate(False)
+    except (ValueError, RuntimeError) as error:
+        raise EpisodeInitializationError(str(error)) from error
     output.mkdir(parents=True, exist_ok=False)
     (output / "frames").mkdir()
     (output / "depth").mkdir()
@@ -55,9 +66,8 @@ def run_episode(
     frames, history, latencies, models = [], [], [], set()
     blocked_count = consecutive_blocks = decisions = executed_steps = semantic_vetoes = 0
     end_reason, stopped, error_code = "decision_budget", False, None
-    observation = env.reset()
     # Evaluation stays local to this function and never becomes policy state.
-    trace = [env.evaluate(False)]
+    trace = [initial_evaluation]
     manifest = {
         "instruction": instruction,
         "max_decisions": max_decisions,
@@ -108,6 +118,7 @@ def run_episode(
                 "recovery_context": monitor.context,
                 "input_memory": memory,
             }
+            response_cursor = len(getattr(policy, "response_events", []))
             decision_start = time.monotonic()
             try:
                 decision = policy.decide(view)
@@ -167,6 +178,14 @@ def run_episode(
                     executed_action=None,
                     error_code=error.code,
                     latency_s=duration,
+                )
+            events = getattr(policy, "response_events", [])[response_cursor:]
+            if events:
+                record["response_events"] = events
+                models.update(
+                    event["raw"]["model"]
+                    for event in events
+                    if isinstance(event["raw"].get("model"), str) and event["raw"]["model"]
                 )
             evaluation = env.evaluate(stopped)
             trace.append(evaluation)

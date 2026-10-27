@@ -102,6 +102,7 @@ class RemotePolicy:
         self.timeout = timeout
         self.calls = 0
         self.request_count = 0
+        self.response_events = []
 
     def close(self):
         if self._owns_client:
@@ -203,6 +204,10 @@ class StartLuxPolicy(RemotePolicy):
             "none_check": True,
         }
         raw = self._request("POST", self.endpoint, payload, inference=True)
+        # Persist planning responses and model identity even if a later request fails.
+        self.response_events.append(
+            {"request_index": self.request_count, "questions": list(questions), "raw": raw}
+        )
         try:
             if not isinstance(raw["model"], str) or not raw["model"]:
                 raise ValueError()

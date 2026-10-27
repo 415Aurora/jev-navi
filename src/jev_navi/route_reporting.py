@@ -96,6 +96,16 @@ def summarize_routes(rows, manifest=None):
             metrics[metric] = _mean(values)
         latencies = [v for row in members for v in row.get("latency_s", [])]
         models = sorted({model for row in members for model in row.get("models", [])})
+        known_trajectories = {
+            (r["metadata"].get("scene_family"), r["metadata"]["trajectory_id"])
+            for r in members
+            if r["metadata"].get("trajectory_id") is not None
+        }
+        missing_trajectory_episodes = {
+            (r["metadata"].get("scene_family"), r["metadata"]["episode_id"])
+            for r in members
+            if r["metadata"].get("trajectory_id") is None
+        }
         aggregates.append(
             {
                 "policy": key[0],
@@ -120,15 +130,9 @@ def summarize_routes(rows, manifest=None):
                 "end_reasons": dict(Counter(r["end_reason"] for r in members)),
                 "service_failures": sum(_failure(r) for r in members),
                 "scene_families": len({r["metadata"].get("scene_family") for r in members}),
-                "trajectories": len(
-                    {
-                        (
-                            r["metadata"].get("scene_family"),
-                            r["metadata"].get("trajectory_id", r["metadata"]["episode_id"]),
-                        )
-                        for r in members
-                    }
-                ),
+                "trajectories": None if missing_trajectory_episodes else len(known_trajectories),
+                "known_trajectories": len(known_trajectories),
+                "missing_trajectory_episodes": len(missing_trajectory_episodes),
                 "mean_path_length": _mean([r["path_length"] for r in members]),
                 "collisions": sum(r["collisions"] for r in members),
                 "http_requests": sum(r["http_requests"] for r in members),

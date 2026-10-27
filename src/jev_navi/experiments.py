@@ -15,7 +15,7 @@ import numpy as np
 from .policies import ReplayPolicy, ScriptedPolicy
 from .providers import PROMPT_VERSION, CallBudget, D3Policy, StartLuxPolicy
 from .recovery import LoopMonitor
-from .runner import run_episode, write_json
+from .runner import EpisodeInitializationError, run_episode, write_json
 from .safety import DepthGuard
 from .types import Camera
 
@@ -473,6 +473,16 @@ def run_suite(config, suite, output):
                 ):
                     manifest["status"] = "partial_" + result["error_code"]
                     break
+            except EpisodeInitializationError as error:
+                manifest["unrunnable_jobs"].append(
+                    {
+                        "episode_id": episode["id"],
+                        "repeat_id": episode.get("repeat_id", 0),
+                        "condition": condition,
+                        "reason": str(error),
+                        "started": False,
+                    }
+                )
             finally:
                 try:
                     if env is not None:

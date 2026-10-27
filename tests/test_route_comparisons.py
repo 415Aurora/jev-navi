@@ -85,3 +85,15 @@ def test_mixed_budgets_within_method_are_not_silently_overwritten():
     repeated["metadata"]["request_budget"]["run_limit"] = 65
     summary = summarize_routes([left, repeated, right])
     assert summary["model_comparisons"] == []
+
+
+def test_missing_trajectory_ids_report_unknown_total_without_collapsing_episodes():
+    first, second, repeat = result(), result(), result()
+    second["metadata"]["episode_id"] = "2"
+    repeat["metadata"]["repeat_id"] = 1
+    for row in (first, second, repeat):
+        row["metadata"]["trajectory_id"] = None
+    group = summarize_routes([first, second, repeat])["groups"][0]
+    assert group["trajectories"] is None
+    assert group["known_trajectories"] == 0
+    assert group["missing_trajectory_episodes"] == 2

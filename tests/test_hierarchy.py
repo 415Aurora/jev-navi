@@ -174,3 +174,44 @@ def test_leading_whitespace_and_terminal_connector_do_not_create_empty_stages():
     spans = source_segments(instruction, candidate_boundaries(instruction))
     assert "".join(instruction[a:b] for a, b in spans) == instruction
     assert all(instruction[a:b].strip() for a, b in spans)
+
+
+@pytest.mark.parametrize("action_fails", [False, True])
+def test_planning_response_and_model_survive_action_failure(tmp_path, action_fails):
+    from jev_navi.environments.synthetic import SyntheticEnvironment
+    from jev_navi.hierarchy import HierarchicalPolicy
+    from jev_navi.runner import run_episode
+    from jev_navi.safety import DepthGuard
+    from jev_navi.types import Camera
+
+    def serve(request):
+        payload = json.loads(request.content)
+        questions = payload["questions"]
+        if "progress" not in questions:
+            raw = response(questions, {key: "merge" for key in questions})
+            raw["model"] = "planner-version-a"
+        elif action_fails:
+            return httpx.Response(503)
+        else:
+            raw = response(questions, {"progress": "complete", "action": "STOP"})
+            raw["model"] = "actor-version-b"
+        return httpx.Response(200, json=raw)
+
+    camera = Camera(width=8, height=8)
+    with httpx.Client(transport=httpx.MockTransport(serve)) as client:
+        policy = HierarchicalPolicy("fixture", client=client)
+        result = run_episode(
+            SyntheticEnvironment(camera),
+            policy,
+            DepthGuard(camera),
+            "Turn left. Stop here.",
+            tmp_path / "versions",
+            protocol_id="r2rce_v13_dev",
+        )
+    expected = ["planner-version-a"] if action_fails else ["actor-version-b", "planner-version-a"]
+    assert result["models"] == expected
+    record = json.loads((tmp_path / "versions/steps.jsonl").read_text().splitlines()[0])
+    assert record["response_events"][0]["raw"]["model"] == "planner-version-a"
+    if action_fails:
+        assert result["end_reason"] == "service_error"
+        assert result["benchmark_metrics"]["sr"] == result["benchmark_metrics"]["spl"] == 0

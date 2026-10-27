@@ -68,7 +68,7 @@ bash scripts/setup_habitat.sh
 
 已实现 StartLux/Bamboo 与 inference.sh d3-mini 两种适配器。输入图像为 PNG data URI，严格按旧到新排列。模型选择取四种动作概率的最大值，保存完整原始响应；不把概率解释为导航安全置信度。
 
-已核对 [Bamboo 官方 StartLux 文档](https://bamboonode.dev/docs/ai-model/decisions/startlux)（2026-10-27）：模型为 `startlux-decision-27b-autothink`，同步接口为 `https://api.bamboonode.dev/v1/decisions`，`/v1/systemone` 是兼容别名。当前测试期免费，零余额新账号无需充值；API Key 必须拥有 `default` 分组和该模型的访问权限。免费政策可能变化，运行前核对控制台。适配器显式使用 `think_mode=never`、`allow_none=false`，每张图像在 state 中有按时间排列的 `<image>` 标记。
+已核对 [Bamboo 官方 StartLux 文档](https://bamboonode.dev/docs/ai-model/decisions/startlux)（2026-10-27）：模型为 `startlux-decision-27b-autothink`，同步接口为 `https://api.bamboonode.dev/v1/decisions`，`/v1/systemone` 是兼容别名。当前测试期免费，零余额新账号无需充值；API Key 必须拥有 `default` 分组和该模型的访问权限。免费政策可能变化，运行前核对控制台。直接策略默认使用 `think_mode=never`，分层模板使用 `auto`，均设置 `allow_none=false`，每张图像在 state 中有按时间排列的 `<image>` 标记。
 
 在 [控制台](https://bamboonode.dev/console) 创建 API Key。本地测试推荐持久化保存：
 
@@ -92,7 +92,7 @@ read -r -s -p 'Inference API key: ' INFERENCE_API_KEY
 export INFERENCE_API_KEY
 ```
 
-确认可使用免费额度后，复制相应 YAML 并将 `free_quota_confirmed` 改为 `true`。静态契约检查先于导航实验；四种检查为当前图、按时序多图、逆序多图和空白图，总 HTTP 尝试上限 24，错误时停止：
+后续真实调用须获得新的阶段预算，并配置 `execution.mode=live`、独立 `phase_id`、`phase_limit` 和 `free_quota_confirmed=true`；现有历史及离线阶段均保持关闭。以下命令记录历史接口流程。静态契约检查先于导航实验；四种检查为当前图、按时序多图、逆序多图和空白图，总 HTTP 尝试上限 24，错误时停止：
 
 ```bash
 .venv/bin/jev-navi contract --config configs/startlux.yaml \
@@ -104,7 +104,7 @@ export INFERENCE_API_KEY
 
 配置仍为 `free_quota_confirmed: false` 时命令会拒绝发出调用。HTTP 成功不证明图像被有效理解；需要用人工标注的导航图像与预期动作检查差异，契约结果默认保留 `image_grounding_verified: false`。
 
-先进行六条短回合探索，再进行完整诊断。`startlux_pilot.yaml` 将导航尝试数限制在476以内，与一次静态契约检查合计最多500；更换供应商时另行配置并记录预算，不自动累计不同运行目录的费用。六任务子集已按用户确认保存到 `configs/pilot_tasks.yaml`：城堡 visible-01/turn-01、卧室 visible-01/disambiguate-01、公寓 turn-01/disambiguate-01。每场景两条、每类型两条，保留原开发/留出划分；六条共享三个目标区域，不能视为六个独立目标。当前完整36任务清单也已就绪。
+先进行六条短回合探索，再进行完整诊断。`startlux_pilot.yaml` 将导航尝试数限制在476以内，与一次静态契约检查合计最多500；这些是历史单次运行设置；当前所有真实请求还必须经过跨运行目录共享的阶段台账，不会因新目录重置阶段额度。六任务子集已按用户确认保存到 `configs/pilot_tasks.yaml`：城堡 visible-01/turn-01、卧室 visible-01/disambiguate-01、公寓 turn-01/disambiguate-01。每场景两条、每类型两条，保留原开发/留出划分；六条共享三个目标区域，不能视为六个独立目标。当前完整36任务清单也已就绪。
 
 ```bash
 # 首先运行六任务 pilot（需在该配置中确认免费额度）
@@ -122,7 +122,7 @@ export INFERENCE_API_KEY
 
 2026-10-27 已完成首次真实 StartLux 接口检查与六回合 pilot：接口无错误，导航成功0/6，发现区域外停止、循环和深度漏检。详见 [真实 pilot 诊断](docs/startlux_pilot_2026-10-27.md)。当前结果尚不支持进入完整评测。随后定位近处深度盲区，新增可选安全深度下倾30°；六回合复测碰撞25→0，成功仍0/6，详见 [安全深度诊断](docs/depth_diagnostic_2026-10-27.md)。 已追加 [循环终止与一次恢复反馈实验](docs/loop_experiment_2026-10-27.md)：固定阈值终止将请求132→71，反馈恢复128，三条件均0/6成功。
 
-## 实验协议与结果
+## 历史 local_v1 实验协议与结果
 
 - 四动作：前进 0.25 米、左转 15°、右转 15°、停止。配置不能改变动作幅度而继续使用原提示词。
 - 每次决策看到当前 RGB、最多两张旧 RGB、最近四条动作与执行反馈。图像 256×256、HFOV 90°，相机高 1.25 米。
@@ -142,9 +142,10 @@ export INFERENCE_API_KEY
 ## 验证
 
 ```bash
-.venv/bin/python -m pytest -q
-.venv/bin/ruff check src tests
-.venv/bin/ruff format --check src tests
+OFFLINE=1 .venv/bin/python -m pytest -q
+.venv/bin/ruff check src tests scripts
+.venv/bin/ruff format --check src tests scripts
+.venv/bin/python -m pip check
 .habitat/bin/python -m pip check
 ```
 

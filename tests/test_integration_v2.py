@@ -190,3 +190,48 @@ def test_offline_suite_rejects_real_policy_before_output_or_network(tmp_path):
     with pytest.raises(ValueError, match="Offline"):
         run_suite(config, route_suite(tmp_path), tmp_path / "forbidden")
     assert not (tmp_path / "forbidden").exists()
+
+
+def test_reset_failure_is_unrunnable_and_remaining_jobs_continue(tmp_path, monkeypatch):
+    from jev_navi import experiments
+
+    suite = route_suite(tmp_path)
+    invalid = copy.deepcopy(suite["episodes"][0])
+    invalid["id"] = "invalid-start"
+    suite["episodes"].insert(0, invalid)
+    closed = []
+
+    class ResetFailure:
+        kind = "synthetic_fixture"
+
+        def __init__(self, camera):
+            pass
+
+        def reset(self):
+            raise ValueError("Episode start is not navigable for this agent/navmesh")
+
+        def close(self):
+            closed.append(True)
+
+    original = experiments.make_environment
+
+    def make_environment(settings, episode, camera, seed, depth_camera=None):
+        if episode["id"] == "invalid-start":
+            return ResetFailure(camera)
+        return original(settings, episode, camera, seed, depth_camera)
+
+    monkeypatch.setattr(experiments, "make_environment", make_environment)
+    output = tmp_path / "reset-failure"
+    rows = experiments.run_suite(fixture_config(tmp_path), suite, output)
+    assert len(rows) == 1 and rows[0]["metadata"]["episode_id"] == "1"
+    manifest = json.loads((output / "suite_manifest.json").read_text())
+    assert manifest["status"] == "partial_unrunnable"
+    assert manifest["planned_jobs"] == 2 and manifest["completed_jobs"] == 1
+    assert len(manifest["unrunnable_jobs"]) == 1
+    issue = manifest["unrunnable_jobs"][0]
+    assert issue["episode_id"] == "invalid-start" and issue["started"] is False
+    assert "not navigable" in issue["reason"]
+    assert manifest["fixture_requests"] == 6 and manifest["budget"]["used"] == 0
+    assert closed == [True]
+    summary = json.loads((output / "summary.json").read_text())
+    assert summary["groups"][0]["episodes"] == 1
