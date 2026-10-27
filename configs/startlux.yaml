@@ -1,0 +1,17 @@
+# Confirm actual free quota before changing this field. No paid calls are enabled by default.
+free_quota_confirmed: true
+diagnostic: true
+environment:
+  backend: habitat
+  forward_m: 0.25
+  turn_deg: 15
+  radius_m: 0.20
+  agent_height_m: 1.50
+  allow_sliding: false
+camera: {width: 256, height: 256, hfov_deg: 90, height_m: 1.25}
+safety: {margin_m: 0.10}
+policy:
+  kind: startlux
+  # URL is read from STARTLUX_ENDPOINT; no unverified hosted path is guessed here.
+run: {max_decisions: 60, seed: 17, call_limit: 7000}
+conditions: [full, no_image_history, shuffled_instruction, no_guard]

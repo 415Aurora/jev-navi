@@ -1,0 +1,16 @@
+# Static contract <=24 HTTP attempts plus this pilot <=476: at most500 in first round.
+# Bamboo official StartLux docs verified 2026-10-27: current rollout is free.
+free_quota_confirmed: true
+diagnostic: false
+environment:
+  backend: habitat
+  forward_m: 0.25
+  turn_deg: 15
+  radius_m: 0.20
+  agent_height_m: 1.50
+  allow_sliding: false
+camera: {width: 256, height: 256, hfov_deg: 90, height_m: 1.25}
+safety: {margin_m: 0.10}
+policy: {kind: startlux}
+run: {max_decisions: 30, seed: 17, call_limit: 476}
+conditions: [full]

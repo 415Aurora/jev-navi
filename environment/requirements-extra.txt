@@ -1,0 +1,10 @@
+# NumPy stays compatible with the paired official Habitat 0.3.3 sources.
+numpy==1.26.4
+pillow==10.4.0
+numpy-quaternion==2023.0.4
+opencv-python==4.11.0.86
+gym==0.23.0
+hydra-core==1.3.2
+omegaconf==2.3.0
+imageio-ffmpeg==0.6.0
+PyYAML==6.0.3

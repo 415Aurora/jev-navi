@@ -1,0 +1,17 @@
+free_quota_confirmed: false
+diagnostic: true
+environment:
+  backend: habitat
+  forward_m: 0.25
+  turn_deg: 15
+  radius_m: 0.20
+  agent_height_m: 1.50
+  allow_sliding: false
+camera: {width: 256, height: 256, hfov_deg: 90, height_m: 1.25}
+safety: {margin_m: 0.10}
+policy:
+  kind: d3
+  base_url: https://api.inference.sh
+run: {max_decisions: 60, seed: 17, call_limit: 7000}
+conditions: [full, no_image_history, shuffled_instruction, no_guard]
+// 1nfsh-1zc58f0d9fvthdd3r6004w7pj1

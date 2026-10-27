@@ -1,0 +1,20 @@
+environment:
+  backend: habitat
+  forward_m: 0.25
+  turn_deg: 15
+  radius_m: 0.20
+  agent_height_m: 1.50
+  allow_sliding: false
+camera:
+  width: 256
+  height: 256
+  hfov_deg: 90
+  height_m: 1.25
+policy:
+  kind: scripted
+  actions: [MOVE_FORWARD, MOVE_FORWARD, STOP]
+run:
+  max_decisions: 3
+  seed: 17
+  call_limit: 500
+conditions: [full, no_image_history, shuffled_instruction]

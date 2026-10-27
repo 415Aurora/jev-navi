@@ -1,0 +1,27 @@
+# Follow-up engineering comparison: only safety depth pitch changes from0 to30 degrees.
+# Baseline136 HTTP attempts + this run<=300 remains below first-round500 cap.
+free_quota_confirmed: true
+diagnostic: false
+environment:
+  backend: habitat
+  forward_m: 0.25
+  turn_deg: 15
+  radius_m: 0.2
+  agent_height_m: 1.5
+  allow_sliding: false
+  depth_pitch_deg: 30
+camera:
+  width: 256
+  height: 256
+  hfov_deg: 90
+  height_m: 1.25
+safety:
+  margin_m: 0.1
+policy:
+  kind: startlux
+run:
+  max_decisions: 30
+  seed: 17
+  call_limit: 300
+conditions:
+- full

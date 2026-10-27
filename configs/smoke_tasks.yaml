@@ -1,0 +1,27 @@
+schema_version: 1
+description: "Software smoke fixtures only. These are not verified semantic tasks."
+episodes:
+  - id: castle-software-a
+    scene_id: castle
+    scene_family: castle
+    split: dev
+    task_type: visible
+    instruction: "Software fixture A: take two short forward steps then stop."
+    scene: data/scene_datasets/skokloster-castle.glb
+    start_position: [3.410717487335205, 0.13356706500053406, 8.388246536254883]
+    start_rotation: [0, 0, 0, 1]
+    goal_position: [3.410717487335205, 0.13356706500053406, 7.888246536254883]
+    success_radius: 0.20
+    annotation_verified: false
+  - id: castle-software-b
+    scene_id: castle
+    scene_family: castle
+    split: dev
+    task_type: visible
+    instruction: "Software fixture B: follow a prerecorded two-step action sequence."
+    scene: data/scene_datasets/skokloster-castle.glb
+    start_position: [3.410717487335205, 0.13356706500053406, 8.388246536254883]
+    start_rotation: [0, 0, 0, 1]
+    goal_position: [3.410717487335205, 0.13356706500053406, 7.888246536254883]
+    success_radius: 0.20
+    annotation_verified: false

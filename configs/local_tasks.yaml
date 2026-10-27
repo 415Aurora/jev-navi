@@ -1,0 +1,1194 @@
+schema_version: 1
+episodes:
+- id: skokloster-castle-visible-01
+  scene_id: skokloster-castle
+  scene_family: historic_palace_salon
+  split: dev
+  task_type: visible
+  instruction: Walk to the tall blue and white tiled stove and stop on the floor in
+    front of it.
+  scene: data/scene_datasets/skokloster-castle.glb
+  start_position:
+  - 2.7936859130859375
+  - 0.1181827187538147
+  - 19.877243041992188
+  start_rotation:
+  - 0.0
+  - 0.7071067811865476
+  - 0.0
+  - -0.7071067811865475
+  goal_position: &id001
+  - 4.146816253662109
+  - 0.05452822148799896
+  - 18.131938934326172
+  success_radius: 0.6
+  annotation_verified: true
+  goal_rotation: &id002
+  - 0.0
+  - -0.7071068678949162
+  - 0.0
+  - 0.7071066944781682
+  landmark_region: tiled-stove
+  annotation_evidence: runs/annotation-preview/skokloster-castle-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants.
+  target_region_id: skokloster-castle:tiled-stove
+  budget_feasibility_checked: true
+  oracle_action_count: 12
+  annotation_review_date: '2026-10-26'
+- id: skokloster-castle-visible-02
+  scene_id: skokloster-castle
+  scene_family: historic_palace_salon
+  split: dev
+  task_type: visible
+  instruction: Walk to the row of chairs beneath the large horse and rider paintings.
+  scene: data/scene_datasets/skokloster-castle.glb
+  start_position:
+  - -0.9457290172576904
+  - 0.08502322435379028
+  - 19.94548988342285
+  start_rotation:
+  - 0.0
+  - 0.7071067811865475
+  - 0.0
+  - 0.7071067811865476
+  goal_position: &id003
+  - -4.997739791870117
+  - 0.16016249358654022
+  - 19.92184829711914
+  success_radius: 0.6
+  annotation_verified: true
+  goal_rotation: &id004
+  - 0.0
+  - 0.7071069435177307
+  - 0.0
+  - 0.707106618855327
+  landmark_region: horse-paintings
+  annotation_evidence: runs/annotation-preview/skokloster-castle-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants.
+  target_region_id: skokloster-castle:horse-paintings
+  budget_feasibility_checked: true
+  oracle_action_count: 15
+  annotation_review_date: '2026-10-26'
+- id: skokloster-castle-visible-03
+  scene_id: skokloster-castle
+  scene_family: historic_palace_salon
+  split: dev
+  task_type: visible
+  instruction: Approach the ornate table with a vase beneath the portrait between
+    two bright windows.
+  scene: data/scene_datasets/skokloster-castle.glb
+  start_position:
+  - 2.7936859130859375
+  - 0.1181827187538147
+  - 19.877243041992188
+  start_rotation:
+  - 0.0
+  - 1.0
+  - 0.0
+  - 6.123233995736766e-17
+  goal_position: &id005
+  - 2.2755093574523926
+  - 0.1579367220401764
+  - 21.325092315673828
+  success_radius: 0.6
+  annotation_verified: true
+  goal_rotation: &id006
+  - 0.0
+  - -0.9999999999999999
+  - 0.0
+  - 1.707425518210702e-08
+  landmark_region: portrait-and-vase
+  annotation_evidence: runs/annotation-preview/skokloster-castle-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants.
+  target_region_id: skokloster-castle:portrait-and-vase
+  budget_feasibility_checked: true
+  oracle_action_count: 6
+  annotation_review_date: '2026-10-26'
+- id: skokloster-castle-visible-04
+  scene_id: skokloster-castle
+  scene_family: historic_palace_salon
+  split: dev
+  task_type: visible
+  instruction: Walk to the floral-painted door beneath the large portrait and stop
+    in front of it.
+  scene: data/scene_datasets/skokloster-castle.glb
+  start_position:
+  - 2.0578150749206543
+  - 0.08950988948345184
+  - 7.669189929962158
+  start_rotation:
+  - 0.0
+  - 0.7071067811865476
+  - 0.0
+  - -0.7071067811865475
+  goal_position: &id007
+  - 5.887521743774414
+  - 0.20992600917816162
+  - 8.397860527038574
+  success_radius: 0.6
+  annotation_verified: true
+  goal_rotation: &id008
+  - 0.0
+  - -0.7071068369433141
+  - 0.0
+  - 0.7071067254297766
+  landmark_region: floral-door
+  annotation_evidence: runs/annotation-preview/skokloster-castle-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants.
+  target_region_id: skokloster-castle:floral-door
+  budget_feasibility_checked: true
+  oracle_action_count: 18
+  annotation_review_date: '2026-10-26'
+- id: skokloster-castle-turn-01
+  scene_id: skokloster-castle
+  scene_family: historic_palace_salon
+  split: dev
+  task_type: turn
+  instruction: Turn to find the landmark. Walk to the tall blue and white tiled stove
+    and stop on the floor in front of it.
+  scene: data/scene_datasets/skokloster-castle.glb
+  start_position:
+  - 2.7936859130859375
+  - 0.1181827187538147
+  - 19.877243041992188
+  start_rotation:
+  - 0.0
+  - -0.7071067811865475
+  - 0.0
+  - -0.7071067811865477
+  goal_position: *id001
+  success_radius: 0.6
+  annotation_verified: true
+  goal_rotation: *id002
+  landmark_region: tiled-stove
+  annotation_evidence: runs/annotation-preview/skokloster-castle-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants.
+  target_region_id: skokloster-castle:tiled-stove
+  budget_feasibility_checked: true
+  oracle_action_count: 18
+  annotation_review_date: '2026-10-26'
+- id: skokloster-castle-turn-02
+  scene_id: skokloster-castle
+  scene_family: historic_palace_salon
+  split: dev
+  task_type: turn
+  instruction: Turn to find the landmark. Walk to the row of chairs beneath the large
+    horse and rider paintings.
+  scene: data/scene_datasets/skokloster-castle.glb
+  start_position:
+  - -0.9457290172576904
+  - 0.08502322435379028
+  - 19.94548988342285
+  start_rotation:
+  - 0.0
+  - 0.7071067811865476
+  - 0.0
+  - -0.7071067811865475
+  goal_position: *id003
+  success_radius: 0.6
+  annotation_verified: true
+  goal_rotation: *id004
+  landmark_region: horse-paintings
+  annotation_evidence: runs/annotation-preview/skokloster-castle-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants.
+  target_region_id: skokloster-castle:horse-paintings
+  budget_feasibility_checked: true
+  oracle_action_count: 27
+  annotation_review_date: '2026-10-26'
+- id: skokloster-castle-turn-03
+  scene_id: skokloster-castle
+  scene_family: historic_palace_salon
+  split: dev
+  task_type: turn
+  instruction: Turn to find the landmark. Approach the ornate table with a vase beneath
+    the portrait between two bright windows.
+  scene: data/scene_datasets/skokloster-castle.glb
+  start_position:
+  - 2.7936859130859375
+  - 0.1181827187538147
+  - 19.877243041992188
+  start_rotation:
+  - 0.0
+  - 1.2246467991473532e-16
+  - 0.0
+  - -1.0
+  goal_position: *id005
+  success_radius: 0.6
+  annotation_verified: true
+  goal_rotation: *id006
+  landmark_region: portrait-and-vase
+  annotation_evidence: runs/annotation-preview/skokloster-castle-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants.
+  target_region_id: skokloster-castle:portrait-and-vase
+  budget_feasibility_checked: true
+  oracle_action_count: 16
+  annotation_review_date: '2026-10-26'
+- id: skokloster-castle-turn-04
+  scene_id: skokloster-castle
+  scene_family: historic_palace_salon
+  split: dev
+  task_type: turn
+  instruction: Turn to find the landmark. Walk to the floral-painted door beneath
+    the large portrait and stop in front of it.
+  scene: data/scene_datasets/skokloster-castle.glb
+  start_position:
+  - 2.0578150749206543
+  - 0.08950988948345184
+  - 7.669189929962158
+  start_rotation:
+  - 0.0
+  - -0.7071067811865475
+  - 0.0
+  - -0.7071067811865477
+  goal_position: *id007
+  success_radius: 0.6
+  annotation_verified: true
+  goal_rotation: *id008
+  landmark_region: floral-door
+  annotation_evidence: runs/annotation-preview/skokloster-castle-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants.
+  target_region_id: skokloster-castle:floral-door
+  budget_feasibility_checked: true
+  oracle_action_count: 28
+  annotation_review_date: '2026-10-26'
+- id: skokloster-castle-disambiguate-01
+  scene_id: skokloster-castle
+  scene_family: historic_palace_salon
+  split: dev
+  task_type: disambiguate
+  instruction: Find the tall tiled stove beside a floral-painted door; approach the
+    stove rather than the chairs beneath the horse paintings.
+  scene: data/scene_datasets/skokloster-castle.glb
+  start_position:
+  - 1.3207197189331055
+  - 0.0714513510465622
+  - 19.138364791870117
+  start_rotation:
+  - 0.0
+  - -0.5764197235712755
+  - 0.0
+  - 0.817153781290899
+  goal_position: *id001
+  success_radius: 0.6
+  annotation_verified: true
+  goal_rotation: *id002
+  landmark_region: tiled-stove
+  annotation_evidence: runs/annotation-preview/skokloster-castle-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants. Start shortened along the reachable path for the 60-decision local pilot.
+  target_region_id: skokloster-castle:tiled-stove
+  budget_feasibility_checked: true
+  oracle_action_count: 11
+  annotation_review_date: '2026-10-26'
+- id: skokloster-castle-disambiguate-02
+  scene_id: skokloster-castle
+  scene_family: historic_palace_salon
+  split: dev
+  task_type: disambiguate
+  instruction: Approach the chairs beneath the large horse paintings rather than the
+    chairs beside the windows.
+  scene: data/scene_datasets/skokloster-castle.glb
+  start_position:
+  - -1.9978325366973877
+  - 0.1439991593360901
+  - 19.904674530029297
+  start_rotation:
+  - 0.0
+  - 0.7091278700644694
+  - 0.0
+  - 0.7050798989460904
+  goal_position: *id003
+  success_radius: 0.6
+  annotation_verified: true
+  goal_rotation: *id004
+  landmark_region: horse-paintings
+  annotation_evidence: runs/annotation-preview/skokloster-castle-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants. Start shortened along the reachable path for the 60-decision local pilot.
+  target_region_id: skokloster-castle:horse-paintings
+  budget_feasibility_checked: true
+  oracle_action_count: 11
+  annotation_review_date: '2026-10-26'
+- id: skokloster-castle-disambiguate-03
+  scene_id: skokloster-castle
+  scene_family: historic_palace_salon
+  split: dev
+  task_type: disambiguate
+  instruction: Approach the vase table below the portrait between two windows rather
+    than the chairs below the horse paintings.
+  scene: data/scene_datasets/skokloster-castle.glb
+  start_position:
+  - -0.7091505527496338
+  - 0.14876067638397217
+  - 21.022239685058594
+  start_rotation:
+  - 0.0
+  - -0.7419404815810409
+  - 0.0
+  - 0.6704657499017329
+  goal_position: *id005
+  success_radius: 0.6
+  annotation_verified: true
+  goal_rotation: *id006
+  landmark_region: portrait-and-vase
+  annotation_evidence: runs/annotation-preview/skokloster-castle-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants. Start shortened along the reachable path for the 60-decision local pilot.
+  target_region_id: skokloster-castle:portrait-and-vase
+  budget_feasibility_checked: true
+  oracle_action_count: 11
+  annotation_review_date: '2026-10-26'
+- id: skokloster-castle-disambiguate-04
+  scene_id: skokloster-castle
+  scene_family: historic_palace_salon
+  split: dev
+  task_type: disambiguate
+  instruction: Approach the floral-painted door beside the two straight-backed chairs
+    and small wooden cabinet, rather than the door beside the tiled stove.
+  scene: data/scene_datasets/skokloster-castle.glb
+  start_position:
+  - 2.91265869140625
+  - 0.24683287739753723
+  - 8.783641815185547
+  start_rotation:
+  - 0.0
+  - -0.6600744281923377
+  - 0.0
+  - 0.751200205835008
+  goal_position: *id007
+  success_radius: 0.6
+  annotation_verified: true
+  goal_rotation: *id008
+  landmark_region: floral-door
+  annotation_evidence: runs/annotation-preview/skokloster-castle-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants. Start shortened along the reachable path for the 60-decision local pilot.
+  target_region_id: skokloster-castle:floral-door
+  budget_feasibility_checked: true
+  oracle_action_count: 11
+  annotation_review_date: '2026-10-26'
+- id: van-gogh-room-visible-01
+  scene_id: van-gogh-room
+  scene_family: stylized_artist_bedroom
+  split: holdout
+  task_type: visible
+  instruction: Approach the blue door beside the foot of the red bed.
+  scene: data/scene_datasets/van-gogh-room.glb
+  start_position:
+  - 2.7108311653137207
+  - 0.1766992211341858
+  - 0.5645077228546143
+  start_rotation:
+  - 0.0
+  - 0.0
+  - 0.0
+  - 1.0
+  goal_position: &id009
+  - 2.9381375312805176
+  - 0.1766992211341858
+  - -0.9406942129135132
+  success_radius: 0.3
+  annotation_verified: true
+  goal_rotation: &id010
+  - 0.0
+  - -6.590898462108366e-08
+  - 0.0
+  - 0.9999999999999978
+  landmark_region: door-by-bed
+  annotation_evidence: runs/annotation-preview/van-gogh-room-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants.
+  target_region_id: van-gogh-room:door-by-bed
+  budget_feasibility_checked: true
+  oracle_action_count: 8
+  annotation_review_date: '2026-10-26'
+- id: van-gogh-room-visible-02
+  scene_id: van-gogh-room
+  scene_family: stylized_artist_bedroom
+  split: holdout
+  task_type: visible
+  instruction: Walk to the wooden chair beside the hanging green cloth.
+  scene: data/scene_datasets/van-gogh-room.glb
+  start_position:
+  - 2.7108311653137207
+  - 0.1766992211341858
+  - 0.5645077228546143
+  start_rotation:
+  - 0.0
+  - 1.0
+  - 0.0
+  - 6.123233995736766e-17
+  goal_position: &id011
+  - 2.7339792251586914
+  - 0.1766992211341858
+  - 1.0996943712234497
+  success_radius: 0.3
+  annotation_verified: true
+  goal_rotation: &id012
+  - 0.0
+  - -0.999999999999996
+  - 0.0
+  - 8.955025083151944e-08
+  landmark_region: chair-by-cloth
+  annotation_evidence: runs/annotation-preview/van-gogh-room-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants.
+  target_region_id: van-gogh-room:chair-by-cloth
+  budget_feasibility_checked: true
+  oracle_action_count: 2
+  annotation_review_date: '2026-10-26'
+- id: van-gogh-room-visible-03
+  scene_id: van-gogh-room
+  scene_family: stylized_artist_bedroom
+  split: holdout
+  task_type: visible
+  instruction: Approach the wooden chair beside the small table under the open window.
+  scene: data/scene_datasets/van-gogh-room.glb
+  start_position:
+  - 2.7108311653137207
+  - 0.1766992211341858
+  - 0.5645077228546143
+  start_rotation:
+  - 0.0
+  - 0.7071067811865475
+  - 0.0
+  - 0.7071067811865476
+  goal_position: &id013
+  - 0.9741309881210327
+  - 0.1766992211341858
+  - 0.37939977645874023
+  success_radius: 0.3
+  annotation_verified: true
+  goal_rotation: &id014
+  - 0.0
+  - 0.6610440381241768
+  - 0.0
+  - 0.7503471061185495
+  landmark_region: chair-by-window
+  annotation_evidence: runs/annotation-preview/van-gogh-room-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants.
+  target_region_id: van-gogh-room:chair-by-window
+  budget_feasibility_checked: true
+  oracle_action_count: 9
+  annotation_review_date: '2026-10-26'
+- id: van-gogh-room-visible-04
+  scene_id: van-gogh-room
+  scene_family: stylized_artist_bedroom
+  split: holdout
+  task_type: visible
+  instruction: Walk to the wooden footboard of the red bed and stop beside it on the
+    floor.
+  scene: data/scene_datasets/van-gogh-room.glb
+  start_position:
+  - 3.489992380142212
+  - 0.1766992211341858
+  - 0.7779563665390015
+  start_rotation:
+  - 0.0
+  - 0.7071067811865475
+  - 0.0
+  - 0.7071067811865476
+  goal_position: &id015
+  - 2.5999999046325684
+  - 0.1766992211341858
+  - 0.0
+  success_radius: 0.3
+  annotation_verified: true
+  goal_rotation: &id016
+  - 0.0
+  - 0.4358648767872706
+  - 0.0
+  - 0.9000121161313427
+  landmark_region: bed-footboard
+  annotation_evidence: runs/annotation-preview/van-gogh-room-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants.
+  target_region_id: van-gogh-room:bed-footboard
+  budget_feasibility_checked: true
+  oracle_action_count: 9
+  annotation_review_date: '2026-10-26'
+- id: van-gogh-room-turn-01
+  scene_id: van-gogh-room
+  scene_family: stylized_artist_bedroom
+  split: holdout
+  task_type: turn
+  instruction: Turn to find the landmark. Approach the blue door beside the foot of
+    the red bed.
+  scene: data/scene_datasets/van-gogh-room.glb
+  start_position:
+  - 2.7108311653137207
+  - 0.1766992211341858
+  - 0.5645077228546143
+  start_rotation:
+  - 0.0
+  - 1.0
+  - 0.0
+  - 6.123233995736766e-17
+  goal_position: *id009
+  success_radius: 0.3
+  annotation_verified: true
+  goal_rotation: *id010
+  landmark_region: door-by-bed
+  annotation_evidence: runs/annotation-preview/van-gogh-room-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants.
+  target_region_id: van-gogh-room:door-by-bed
+  budget_feasibility_checked: true
+  oracle_action_count: 18
+  annotation_review_date: '2026-10-26'
+- id: van-gogh-room-turn-02
+  scene_id: van-gogh-room
+  scene_family: stylized_artist_bedroom
+  split: holdout
+  task_type: turn
+  instruction: Turn to find the landmark. Walk to the wooden chair beside the hanging
+    green cloth.
+  scene: data/scene_datasets/van-gogh-room.glb
+  start_position:
+  - 2.7108311653137207
+  - 0.1766992211341858
+  - 0.5645077228546143
+  start_rotation:
+  - 0.0
+  - 1.2246467991473532e-16
+  - 0.0
+  - -1.0
+  goal_position: *id011
+  success_radius: 0.3
+  annotation_verified: true
+  goal_rotation: *id012
+  landmark_region: chair-by-cloth
+  annotation_evidence: runs/annotation-preview/van-gogh-room-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants.
+  target_region_id: van-gogh-room:chair-by-cloth
+  budget_feasibility_checked: true
+  oracle_action_count: 14
+  annotation_review_date: '2026-10-26'
+- id: van-gogh-room-turn-03
+  scene_id: van-gogh-room
+  scene_family: stylized_artist_bedroom
+  split: holdout
+  task_type: turn
+  instruction: Turn to find the landmark. Approach the wooden chair beside the small
+    table under the open window.
+  scene: data/scene_datasets/van-gogh-room.glb
+  start_position:
+  - 2.7108311653137207
+  - 0.1766992211341858
+  - 0.5645077228546143
+  start_rotation:
+  - 0.0
+  - 1.0
+  - 0.0
+  - 6.123233995736766e-17
+  goal_position: *id013
+  success_radius: 0.3
+  annotation_verified: true
+  goal_rotation: *id014
+  landmark_region: chair-by-window
+  annotation_evidence: runs/annotation-preview/van-gogh-room-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants.
+  target_region_id: van-gogh-room:chair-by-window
+  budget_feasibility_checked: true
+  oracle_action_count: 15
+  annotation_review_date: '2026-10-26'
+- id: van-gogh-room-turn-04
+  scene_id: van-gogh-room
+  scene_family: stylized_artist_bedroom
+  split: holdout
+  task_type: turn
+  instruction: Turn to find the landmark. Walk to the wooden footboard of the red
+    bed and stop beside it on the floor.
+  scene: data/scene_datasets/van-gogh-room.glb
+  start_position:
+  - 3.489992380142212
+  - 0.1766992211341858
+  - 0.7779563665390015
+  start_rotation:
+  - 0.0
+  - 1.0
+  - 0.0
+  - 6.123233995736766e-17
+  goal_position: *id015
+  success_radius: 0.3
+  annotation_verified: true
+  goal_rotation: *id016
+  landmark_region: bed-footboard
+  annotation_evidence: runs/annotation-preview/van-gogh-room-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants.
+  target_region_id: van-gogh-room:bed-footboard
+  budget_feasibility_checked: true
+  oracle_action_count: 15
+  annotation_review_date: '2026-10-26'
+- id: van-gogh-room-disambiguate-01
+  scene_id: van-gogh-room
+  scene_family: stylized_artist_bedroom
+  split: holdout
+  task_type: disambiguate
+  instruction: Of the two blue doors, approach the one beside the bed footboard, rather
+    than the door behind the chair by the green cloth.
+  scene: data/scene_datasets/van-gogh-room.glb
+  start_position:
+  - 1.6312233209609985
+  - 0.1766992211341858
+  - 0.7046539187431335
+  start_rotation:
+  - 0.0
+  - -0.3293645285167719
+  - 0.0
+  - 0.9442028422722125
+  goal_position: *id009
+  success_radius: 0.3
+  annotation_verified: true
+  goal_rotation: *id010
+  landmark_region: door-by-bed
+  annotation_evidence: runs/annotation-preview/van-gogh-room-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants.
+  target_region_id: van-gogh-room:door-by-bed
+  budget_feasibility_checked: true
+  oracle_action_count: 14
+  annotation_review_date: '2026-10-26'
+- id: van-gogh-room-disambiguate-02
+  scene_id: van-gogh-room
+  scene_family: stylized_artist_bedroom
+  split: holdout
+  task_type: disambiguate
+  instruction: Of the two wooden chairs, approach the one beside the hanging green
+    cloth, rather than the chair by the window table.
+  scene: data/scene_datasets/van-gogh-room.glb
+  start_position:
+  - 3.2972044944763184
+  - 0.1766992211341858
+  - -0.4743502736091614
+  start_rotation:
+  - 0.0
+  - 0.985276530760363
+  - 0.0
+  - 0.1709682951100095
+  goal_position: *id011
+  success_radius: 0.3
+  annotation_verified: true
+  goal_rotation: *id012
+  landmark_region: chair-by-cloth
+  annotation_evidence: runs/annotation-preview/van-gogh-room-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants.
+  target_region_id: van-gogh-room:chair-by-cloth
+  budget_feasibility_checked: true
+  oracle_action_count: 7
+  annotation_review_date: '2026-10-26'
+- id: van-gogh-room-disambiguate-03
+  scene_id: van-gogh-room
+  scene_family: stylized_artist_bedroom
+  split: holdout
+  task_type: disambiguate
+  instruction: Of the two wooden chairs, approach the one beside the small window
+    table, rather than the chair beside the green cloth.
+  scene: data/scene_datasets/van-gogh-room.glb
+  start_position:
+  - 3.489992380142212
+  - 0.1766992211341858
+  - 0.7779563665390015
+  start_rotation:
+  - 0.0
+  - 0.6494357691184136
+  - 0.0
+  - 0.7604164528661743
+  goal_position: *id013
+  success_radius: 0.3
+  annotation_verified: true
+  goal_rotation: *id014
+  landmark_region: chair-by-window
+  annotation_evidence: runs/annotation-preview/van-gogh-room-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants.
+  target_region_id: van-gogh-room:chair-by-window
+  budget_feasibility_checked: true
+  oracle_action_count: 10
+  annotation_review_date: '2026-10-26'
+- id: van-gogh-room-disambiguate-04
+  scene_id: van-gogh-room
+  scene_family: stylized_artist_bedroom
+  split: holdout
+  task_type: disambiguate
+  instruction: Approach the footboard end of the red bed, rather than its pillow end
+    by the window.
+  scene: data/scene_datasets/van-gogh-room.glb
+  start_position:
+  - 2.7108311653137207
+  - 0.1766992211341858
+  - 0.5645077228546143
+  start_rotation:
+  - 0.0
+  - 0.0967816351447988
+  - 0.0
+  - 0.9953056390369237
+  goal_position: *id015
+  success_radius: 0.3
+  annotation_verified: true
+  goal_rotation: *id016
+  landmark_region: bed-footboard
+  annotation_evidence: runs/annotation-preview/van-gogh-room-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants.
+  target_region_id: van-gogh-room:bed-footboard
+  budget_feasibility_checked: true
+  oracle_action_count: 3
+  annotation_review_date: '2026-10-26'
+- id: apartment_1-visible-01
+  scene_id: apartment_1
+  scene_family: scanned_modern_apartment
+  split: holdout
+  task_type: visible
+  instruction: Approach the dark chest of drawers beneath the round wall mirror.
+  scene: data/scene_datasets/apartment_1.glb
+  start_position:
+  - 5.509199142456055
+  - -1.6002482175827026
+  - 6.322789192199707
+  start_rotation:
+  - 0.0
+  - 1.0
+  - 0.0
+  - 6.123233995736766e-17
+  goal_position: &id017
+  - 5.906232833862305
+  - -1.6002482175827026
+  - 6.839814186096191
+  success_radius: 0.45
+  annotation_verified: true
+  goal_rotation: &id018
+  - 0.0
+  - -0.9999999999999979
+  - 0.0
+  - 6.565825711474587e-08
+  landmark_region: round-mirror
+  annotation_evidence: runs/annotation-preview/apartment_1-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants.
+  target_region_id: apartment_1:round-mirror
+  budget_feasibility_checked: true
+  oracle_action_count: 4
+  annotation_review_date: '2026-10-26'
+- id: apartment_1-visible-02
+  scene_id: apartment_1
+  scene_family: scanned_modern_apartment
+  split: holdout
+  task_type: visible
+  instruction: Walk to the open wooden door beside the dining area.
+  scene: data/scene_datasets/apartment_1.glb
+  start_position:
+  - 3.4928276538848877
+  - -1.6002482175827026
+  - 3.6843149662017822
+  start_rotation:
+  - 0.0
+  - 0.0
+  - 0.0
+  - 1.0
+  goal_position: &id019
+  - 3.3964569568634033
+  - -1.6002482175827026
+  - 3.0330846309661865
+  success_radius: 0.45
+  annotation_verified: true
+  goal_rotation: &id020
+  - 0.0
+  - 4.5110933174705384e-08
+  - 0.0
+  - 0.999999999999999
+  landmark_region: dining-door
+  annotation_evidence: runs/annotation-preview/apartment_1-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants.
+  target_region_id: apartment_1:dining-door
+  budget_feasibility_checked: true
+  oracle_action_count: 2
+  annotation_review_date: '2026-10-26'
+- id: apartment_1-visible-03
+  scene_id: apartment_1
+  scene_family: scanned_modern_apartment
+  split: holdout
+  task_type: visible
+  instruction: Approach the framed picture on the end wall near the tall potted plant.
+  scene: data/scene_datasets/apartment_1.glb
+  start_position:
+  - 3.4190518856048584
+  - -1.6002482175827026
+  - 1.0132619142532349
+  start_rotation:
+  - 0.0
+  - 0.5698790388582314
+  - 0.0
+  - 0.8217285933141297
+  goal_position: &id021
+  - 0.6861624717712402
+  - -1.6002482175827026
+  - -0.009416216984391212
+  success_radius: 0.45
+  annotation_verified: true
+  goal_rotation: &id022
+  - 0.0
+  - 0.7071067811865475
+  - 0.0
+  - 0.7071067811865476
+  landmark_region: end-wall-painting
+  annotation_evidence: runs/annotation-preview/apartment_1-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants. Start shortened along the reachable path for the 60-decision local pilot.
+  target_region_id: apartment_1:end-wall-painting
+  budget_feasibility_checked: true
+  oracle_action_count: 19
+  annotation_review_date: '2026-10-26'
+- id: apartment_1-visible-04
+  scene_id: apartment_1
+  scene_family: scanned_modern_apartment
+  split: holdout
+  task_type: visible
+  instruction: Approach the window with blinds beside the white sofa.
+  scene: data/scene_datasets/apartment_1.glb
+  start_position:
+  - 5.377307891845703
+  - -1.6002482175827026
+  - 0.4017145335674286
+  start_rotation:
+  - 0.0
+  - 0.0
+  - 0.0
+  - 1.0
+  goal_position: &id023
+  - 5.339695453643799
+  - -1.6002482175827026
+  - -1.3728936910629272
+  success_radius: 0.45
+  annotation_verified: true
+  goal_rotation: &id024
+  - 0.0
+  - 0.2149054728938609
+  - 0.0
+  - 0.9766348538324168
+  landmark_region: sofa-window
+  annotation_evidence: runs/annotation-preview/apartment_1-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants.
+  target_region_id: apartment_1:sofa-window
+  budget_feasibility_checked: true
+  oracle_action_count: 7
+  annotation_review_date: '2026-10-26'
+- id: apartment_1-turn-01
+  scene_id: apartment_1
+  scene_family: scanned_modern_apartment
+  split: holdout
+  task_type: turn
+  instruction: Turn to find the landmark. Approach the dark chest of drawers beneath
+    the round wall mirror.
+  scene: data/scene_datasets/apartment_1.glb
+  start_position:
+  - 5.509199142456055
+  - -1.6002482175827026
+  - 6.322789192199707
+  start_rotation:
+  - 0.0
+  - 1.2246467991473532e-16
+  - 0.0
+  - -1.0
+  goal_position: *id017
+  success_radius: 0.45
+  annotation_verified: true
+  goal_rotation: *id018
+  landmark_region: round-mirror
+  annotation_evidence: runs/annotation-preview/apartment_1-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants.
+  target_region_id: apartment_1:round-mirror
+  budget_feasibility_checked: true
+  oracle_action_count: 11
+  annotation_review_date: '2026-10-26'
+- id: apartment_1-turn-02
+  scene_id: apartment_1
+  scene_family: scanned_modern_apartment
+  split: holdout
+  task_type: turn
+  instruction: Turn to find the landmark. Walk to the open wooden door beside the
+    dining area.
+  scene: data/scene_datasets/apartment_1.glb
+  start_position:
+  - 3.4928276538848877
+  - -1.6002482175827026
+  - 3.6843149662017822
+  start_rotation:
+  - 0.0
+  - 1.0
+  - 0.0
+  - 6.123233995736766e-17
+  goal_position: *id019
+  success_radius: 0.45
+  annotation_verified: true
+  goal_rotation: *id020
+  landmark_region: dining-door
+  annotation_evidence: runs/annotation-preview/apartment_1-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants.
+  target_region_id: apartment_1:dining-door
+  budget_feasibility_checked: true
+  oracle_action_count: 14
+  annotation_review_date: '2026-10-26'
+- id: apartment_1-turn-03
+  scene_id: apartment_1
+  scene_family: scanned_modern_apartment
+  split: holdout
+  task_type: turn
+  instruction: Turn to find the landmark. Approach the framed picture on the end wall
+    near the tall potted plant.
+  scene: data/scene_datasets/apartment_1.glb
+  start_position:
+  - 3.4190518856048584
+  - -1.6002482175827026
+  - 1.0132619142532349
+  start_rotation:
+  - 0.0
+  - 0.8217285933141298
+  - 0.0
+  - -0.5698790388582312
+  goal_position: *id021
+  success_radius: 0.45
+  annotation_verified: true
+  goal_rotation: *id022
+  landmark_region: end-wall-painting
+  annotation_evidence: runs/annotation-preview/apartment_1-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants. Start shortened along the reachable path for the 60-decision local pilot.
+  target_region_id: apartment_1:end-wall-painting
+  budget_feasibility_checked: true
+  oracle_action_count: 29
+  annotation_review_date: '2026-10-26'
+- id: apartment_1-turn-04
+  scene_id: apartment_1
+  scene_family: scanned_modern_apartment
+  split: holdout
+  task_type: turn
+  instruction: Turn to find the landmark. Approach the window with blinds beside the
+    white sofa.
+  scene: data/scene_datasets/apartment_1.glb
+  start_position:
+  - 5.377307891845703
+  - -1.6002482175827026
+  - 0.4017145335674286
+  start_rotation:
+  - 0.0
+  - 1.0
+  - 0.0
+  - 6.123233995736766e-17
+  goal_position: *id023
+  success_radius: 0.45
+  annotation_verified: true
+  goal_rotation: *id024
+  landmark_region: sofa-window
+  annotation_evidence: runs/annotation-preview/apartment_1-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants.
+  target_region_id: apartment_1:sofa-window
+  budget_feasibility_checked: true
+  oracle_action_count: 19
+  annotation_review_date: '2026-10-26'
+- id: apartment_1-disambiguate-01
+  scene_id: apartment_1
+  scene_family: scanned_modern_apartment
+  split: holdout
+  task_type: disambiguate
+  instruction: Approach the chest beneath the round mirror in the dining area, rather
+    than the framed picture at the far end of the living room.
+  scene: data/scene_datasets/apartment_1.glb
+  start_position:
+  - 3.4928276538848877
+  - -1.6002482175827026
+  - 3.6843149662017822
+  start_rotation:
+  - 0.0
+  - -0.9471832229598258
+  - 0.0
+  - 0.32069290940623707
+  goal_position: *id017
+  success_radius: 0.45
+  annotation_verified: true
+  goal_rotation: *id018
+  landmark_region: round-mirror
+  annotation_evidence: runs/annotation-preview/apartment_1-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants.
+  target_region_id: apartment_1:round-mirror
+  budget_feasibility_checked: true
+  oracle_action_count: 29
+  annotation_review_date: '2026-10-26'
+- id: apartment_1-disambiguate-02
+  scene_id: apartment_1
+  scene_family: scanned_modern_apartment
+  split: holdout
+  task_type: disambiguate
+  instruction: Approach the wooden door beside the dining table, rather than the wooden
+    door next to the end-wall picture.
+  scene: data/scene_datasets/apartment_1.glb
+  start_position:
+  - 5.937595367431641
+  - -1.6002482175827026
+  - 4.2978949546813965
+  start_rotation:
+  - 0.0
+  - 0.5265027129467472
+  - 0.0
+  - 0.8501734489265793
+  goal_position: *id019
+  success_radius: 0.45
+  annotation_verified: true
+  goal_rotation: *id020
+  landmark_region: dining-door
+  annotation_evidence: runs/annotation-preview/apartment_1-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants. Start shortened along the reachable path for the 60-decision local pilot.
+  target_region_id: apartment_1:dining-door
+  budget_feasibility_checked: true
+  oracle_action_count: 19
+  annotation_review_date: '2026-10-26'
+- id: apartment_1-disambiguate-03
+  scene_id: apartment_1
+  scene_family: scanned_modern_apartment
+  split: holdout
+  task_type: disambiguate
+  instruction: Approach the framed end-wall picture near the potted plant, rather
+    than the round mirror in the dining area.
+  scene: data/scene_datasets/apartment_1.glb
+  start_position:
+  - 2.03372859954834
+  - -1.6002482175827026
+  - -2.055997848510742
+  start_rotation:
+  - 0.0
+  - 0.957915737603994
+  - 0.0
+  - 0.28704954215360856
+  goal_position: *id021
+  success_radius: 0.45
+  annotation_verified: true
+  goal_rotation: *id022
+  landmark_region: end-wall-painting
+  annotation_evidence: runs/annotation-preview/apartment_1-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants. Start shortened along the reachable path for the 60-decision local pilot.
+  target_region_id: apartment_1:end-wall-painting
+  budget_feasibility_checked: true
+  oracle_action_count: 22
+  annotation_review_date: '2026-10-26'
+- id: apartment_1-disambiguate-04
+  scene_id: apartment_1
+  scene_family: scanned_modern_apartment
+  split: holdout
+  task_type: disambiguate
+  instruction: Approach the window beside the white sofa, rather than the windows
+    beside the dining table.
+  scene: data/scene_datasets/apartment_1.glb
+  start_position:
+  - 4.678009986877441
+  - -1.6002482175827026
+  - 1.103820562362671
+  start_rotation:
+  - 0.0
+  - -0.1301623097409059
+  - 0.0
+  - 0.9914926994803908
+  goal_position: *id023
+  success_radius: 0.45
+  annotation_verified: true
+  goal_rotation: *id024
+  landmark_region: sofa-window
+  annotation_evidence: runs/annotation-preview/apartment_1-tasks.jpg
+  annotation_note: Start and goal RGB panels visually inspected; goal is a local walkable
+    landmark region. Path and strict outside-radius start validated with radius 0.2
+    m, height 1.5 m recomputed navmesh. Shared target_region_id identifies correlated
+    variants. Start shortened along the reachable path for the 60-decision local pilot.
+  target_region_id: apartment_1:sofa-window
+  budget_feasibility_checked: true
+  oracle_action_count: 23
+  annotation_review_date: '2026-10-26'

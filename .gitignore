@@ -1,0 +1,37 @@
+# Credentials and machine-local settings
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+secrets/
+# Isolated runtimes, dependencies, datasets and experiment artifacts
+.venv/
+.habitat/
+.tools/
+vendor/
+data/
+runs/
+# Python and tool caches
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+build/
+dist/
+# Generated environment diagnostics
+environment/*.log
+environment/smoke-*.json
+environment/smoke-*.png
+environment/*-query.json
+# Local operating-system and editor files
+.DS_Store
+*.swp
+*.swo

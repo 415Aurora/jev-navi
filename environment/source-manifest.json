@@ -1,0 +1,47 @@
+{
+  "requested": {
+    "python": "3.11",
+    "habitat_sim": {
+      "tag": "v0.3.4",
+      "commit": "24dfda7a746037f7b6b63730a02e3d05a688fff0"
+    },
+    "habitat_lab": {
+      "tag": "v0.3.4",
+      "commit": "cdbb4880519505adf45fba0f0c0c3a3fd18a2a55"
+    }
+  },
+  "installed": {
+    "python": "3.9.23",
+    "habitat_sim": {
+      "version": "0.3.3",
+      "source_commit": "acbe6f4922e68145e401e55c30f9dfea460a3f24",
+      "package_build": "py3.9_headless_linux_acbe6f4922e68145e401e55c30f9dfea460a3f24",
+      "physics": "disabled",
+      "rendering": "headless EGL"
+    },
+    "habitat_lab": {
+      "version": "0.3.3",
+      "source_commit": "094d6be2f9d057e4781a68ae792132895fd4d3d0"
+    },
+    "numpy": "1.26.4"
+  },
+  "bootstrap": {
+    "micromamba": "2.9.0",
+    "url": "https://github.com/mamba-org/micromamba-releases/releases/download/2.9.0-0/micromamba-linux-64",
+    "sha256": "366cd9cd8be14df1ab8ed50352a82111082a36686b2d389fdb79a92c3fafb3e3"
+  },
+  "dataset": {
+    "name": "habitat-test-scenes_v1.0",
+    "url": "https://dl.fbaipublicfiles.com/habitat/habitat-test-scenes_v1.0.zip",
+    "archive_sha256": "072c053c00d8e49132e48837eea38f8b6cd19e3079c40fd705ffef12347d7302",
+    "scene": "data/scene_datasets/skokloster-castle.glb"
+  },
+  "verified_on": "2026-10-26",
+  "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+  "driver": "590.48.01",
+  "deviations": [
+    "No habitat-sim0.3.4 conda package was found. Exact0.3.4 Sim source package metadata declares version0.3.3 and NumPy>=2,<2.4; paired Lab source requires NumPy1.26.4.",
+    "Official0.3.3 headless conda packages support Python3.9 only. Lab0.3.3 import fails on Python3.11 due mutable dataclass defaults.",
+    "Main policy process uses Python>=3.11 and invokes isolated Habitat Python3.9 worker over JSON stdio."
+  ]
+}
