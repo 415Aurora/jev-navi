@@ -3,6 +3,7 @@
 import hashlib
 import json
 import math
+import re
 import time
 from dataclasses import dataclass
 
@@ -79,6 +80,12 @@ class RemotePolicy:
             "retry_attempts": self.retry_count,
         }
 
+    def _begin_attempt(self, method, payload, inference):
+        return None
+
+    def _finish_attempt(self, event, *, response=None, error_code=None):
+        pass
+
     def close(self):
         if self._owns_client:
             self.client.close()
@@ -99,6 +106,7 @@ class RemotePolicy:
             self.calls += int(inference)
             self.poll_count += int(method == "GET")
             self.retry_count += int(attempt > 0)
+            event = self._begin_attempt(method, payload, inference)
             try:
                 response = self.client.request(
                     method,
@@ -108,13 +116,16 @@ class RemotePolicy:
                     timeout=min(remaining, self.timeout),
                 )
             except httpx.TimeoutException:
+                self._finish_attempt(event, error_code="timeout")
                 if attempt == 0:
                     continue
                 raise ServiceError("timeout") from None
             except httpx.TransportError:
+                self._finish_attempt(event, error_code="network")
                 if attempt == 0:
                     continue
                 raise ServiceError("network") from None
+            self._finish_attempt(event, response=response)
             status = response.status_code
             retryable = status == 429 or status >= 500
             if retryable and attempt == 0:
@@ -251,22 +262,44 @@ class D3Policy(RemotePolicy):
         self.poll_interval = poll_interval
         self.prompt_version = prompt_version
 
-    def _record_response(self, response, stage, payload=None):
-        data = response.get("data")
-        output = data.get("output") if isinstance(data, dict) else None
+    def _redact(self, value):
+        # Normalize ASCII JSON escapes before redacting echoed credentials, including
+        # malformed JSON that cannot be decoded as a complete object.
+        value = re.sub(r"\\u00([0-7][0-9a-fA-F])", lambda m: chr(int(m[1], 16)), value)
+        value = value.replace(self._key, "[REDACTED]")
+        value = re.sub(r"(?i)(bearer\s+)[^\s\"},]+", r"\1[REDACTED]", value)
+        return value.encode("utf-8", errors="replace").decode("utf-8")
+
+    def _safe_audit(self, value):
+        invalid_number = False
+
+        def safe(item):
+            nonlocal invalid_number
+            if isinstance(item, float) and not math.isfinite(item):
+                invalid_number = True
+                return {"invalid_json_number": str(item)}
+            if isinstance(item, str):
+                return self._redact(item)
+            if isinstance(item, dict):
+                return {self._redact(k): safe(v) for k, v in item.items()}
+            if isinstance(item, list):
+                return [safe(v) for v in item]
+            return item
+
+        return safe(value), invalid_number
+
+    def _begin_attempt(self, method, payload, inference):
         event = {
             "request_index": self.request_count,
-            "stage": stage,
-            "raw": {
-                "model": output.get("model") if isinstance(output, dict) else None,
-                "response": response,
-            },
+            "stage": "submission" if inference else "poll",
+            "raw": {"model": None, "response": None},
+            "_started": time.monotonic(),
         }
         if payload is not None:
             event["request"] = {
                 "app": payload["app"],
-                "state": payload["input"]["state"],
-                "questions": payload["input"]["choices"],
+                "state": self._redact(payload["input"]["state"]),
+                "questions": self._safe_audit(payload["input"]["choices"])[0],
                 "image_count": len(payload["input"]["images"]),
                 "image_uri_sha256": [
                     hashlib.sha256(x.encode()).hexdigest() for x in payload["input"]["images"]
@@ -276,6 +309,45 @@ class D3Policy(RemotePolicy):
                 ).hexdigest(),
             }
         self.response_events.append(event)
+        return event
+
+    def _finish_attempt(self, event, *, response=None, error_code=None):
+        event["latency_s"] = time.monotonic() - event.pop("_started")
+        raw = event["raw"]
+        if response is None:
+            raw["transport_error"] = error_code
+            return
+        raw.update(
+            http_status=response.status_code,
+            body_bytes=len(response.content),
+            body_sha256=hashlib.sha256(response.content).hexdigest(),
+        )
+        if not 200 <= response.status_code < 300:
+            # Keep the existing rule: HTTP error bodies may echo credentials.
+            raw["body_omitted"] = "http_error_body"
+            return
+        preview = self._redact(response.text)
+        raw["body_truncated"] = len(preview.encode()) > 65536
+        raw["body_excerpt"] = preview.encode()[:65536].decode("utf-8", errors="ignore")
+        try:
+            parsed = response.json()
+            safe, invalid_number = self._safe_audit(parsed)
+        except (ValueError, TypeError, RecursionError):
+            raw["parse_error"] = "invalid_json"
+            raise ServiceError("invalid_response", "Invalid provider JSON") from None
+        # Use the redacted parsed representation for valid JSON; raw text may use
+        # alternate escaping of a credential. The byte hash preserves body identity.
+        rendered = json.dumps(safe, ensure_ascii=False, allow_nan=False).encode()
+        raw["body_truncated"] = len(rendered) > 65536
+        raw["body_excerpt"] = rendered[:65536].decode("utf-8", errors="ignore")
+        raw["response"] = safe if not raw["body_truncated"] else {"audit_omitted": "over_64KiB"}
+        data = parsed.get("data") if isinstance(parsed, dict) else None
+        output = data.get("output") if isinstance(data, dict) else None
+        if isinstance(output, dict) and isinstance(output.get("model"), str):
+            raw["model"] = self._redact(output["model"])
+        if invalid_number:
+            raw["parse_error"] = "nonfinite_json_number"
+            raise ServiceError("invalid_response", "Nonfinite provider JSON number")
 
     def decide(self, view):
         start = time.monotonic()
@@ -301,7 +373,7 @@ class D3Policy(RemotePolicy):
         response = self._request(
             "POST", self.base_url + "/apps/run", payload, inference=True, deadline=deadline
         )
-        self._record_response(response, "submission", payload)
+        submission_audit = self.response_events[-1]["raw"]["response"]
         terminal = response
         try:
             data = response["data"]
@@ -325,7 +397,6 @@ class D3Policy(RemotePolicy):
                 terminal = self._request(
                     "GET", self.base_url + "/tasks/" + task_id, deadline=deadline
                 )
-                self._record_response(terminal, "poll")
                 data = terminal["data"]
             if status != 10:
                 raise ServiceError(
@@ -350,11 +421,15 @@ class D3Policy(RemotePolicy):
             max(Action, key=lambda x: probabilities[x.value]),
             model,
             probabilities,
-            {"submission": response, "terminal": terminal, "identity": identity},
+            {
+                "submission": submission_audit,
+                "terminal": self.response_events[-1]["raw"]["response"],
+                "identity": self._safe_audit(identity)[0],
+            },
             time.monotonic() - start,
             {
-                "input_tokens": output.get("input_tokens"),
-                "reported_usage": output.get("usage"),
-                "reported_cost": output.get("cost"),
+                "input_tokens": self._safe_audit(output.get("input_tokens"))[0],
+                "reported_usage": self._safe_audit(output.get("usage"))[0],
+                "reported_cost": self._safe_audit(output.get("cost"))[0],
             },
         )

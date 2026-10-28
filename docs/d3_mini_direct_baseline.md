@@ -17,10 +17,14 @@ STOP要求完整路线已完成；成功仍须显式STOP且私有测地距离严
 
 ## 模型与请求审计
 目标应用vllm-sr/d3-mini，返回模型必须是d3-mini或vllm-sr/d3-mini，其他型号报model_mismatch。
-原始submission/poll响应在解析失败时也保留；模型不符会停止当前suite，避免混合版本继续运行。
+submission/poll请求摘要在transport前留存；响应在JSON解码/结构校验前审计。
+保留响应状态、原始字节长度和SHA256、最多64KiB脱敏正文摘要；小型JSON额外保存脱敏结构。
+超长结构显式标记省略，NaN/Infinity等非有限数值以可JSON序列化的错误标记留证并拒绝执行。
+HTTP错误正文继续省略，防止凭据回显。模型不符会停止当前suite，避免混合型号继续运行。
 记录请求与返回型号、供应商提供的revision和用量；未提供的版本、费用记null，不能解释为0。
 供应商没有公开的thinking开关；元数据think_mode为null、reasoning_mode为direct_choice，
 不声称控制了模型内部推理。动作概率也不是成功概率或安全置信度。
+汇总model_version_warning只比较型号字符串；false不证明供应商revision已固定。
 
 每次实际transport之前持久预算预扣，包含POST重试、GET轮询和GET重试。
 分别记录http_attempts、model_submissions、poll_attempts、retry_attempts；后者是子集，不相加。
@@ -58,3 +62,17 @@ SR/SPL/NE/OS/nDTW沿用现有实现；缺失指标报告null及原因，不新�
 服务错误、预算截断和guard主导结果时不归因于模型能力。
 只有Qwen SR高至少10个百分点、考虑场景相关性的配对区间排除0且审计支持，
 才设计空间动作编码和时序记忆消融；否则保留不确定结论。
+
+## 验收与审查记录
+
+全量226项测试、Ruff/55文件格式检查及双环境pip check通过。
+独立只读审查发现两项重要审计问题：非有限响应数值导致已开始回合保存失败、
+损坏或非对象JSON响应缺少请求/响应审计。13项新增回归先复现失败，再一轮修复转绿，
+包括submission/poll、异常usage、脱敏和正文上限。没有遗留代码审查项。
+审查者只运行两个离线MockTransport探针；全量检查与原生验收由实施者执行。
+
+初验目录runs/d3-mini-direct-initial-20261028：12回合、6项几何断言通过、
+4个full到达类控制被原guard阻断、366次夹具提交、0真实模型HTTP、预算未变。
+这份初验记录dirty=true，不作为最终源码身份验收。
+最终干净提交复跑目录为runs/d3-mini-direct-final-20261028；
+以其中control-summary.json记录的Git SHA、dirty=false、计数、预算与verified字段为最终证据。

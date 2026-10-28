@@ -216,3 +216,115 @@ def test_shipped_offline_configuration_runs_without_network(tmp_path):
     results = run_suite(config, suite, tmp_path / "shipped")
     assert len(results) == 1 and results[0]["end_reason"] == "stop"
     assert results[0]["http_requests"] == 0 and results[0]["fixture_requests"] == 1
+
+
+@pytest.mark.parametrize("stage", ["submission", "poll"])
+@pytest.mark.parametrize(
+    "body",
+    [
+        b"[]",
+        b"null",
+        b'{"data":',
+        b'{"data":{"status":10,"output":{"model":"d3-mini","choices":{"action":{"probabilities":{"MOVE_FORWARD":1e999,"TURN_LEFT":0,"TURN_RIGHT":0,"STOP":0}}}}}}',
+        b'{"data":{"status":10,"output":{"model":"d3-mini","usage":{"tokens":1e999},"choices":{"action":{"probabilities":{"MOVE_FORWARD":1,"TURN_LEFT":0,"TURN_RIGHT":0,"STOP":0}}}}}}',
+    ],
+)
+def test_bad_provider_body_preserves_started_episode_and_response(tmp_path, stage, body):
+    import hashlib
+
+    import httpx
+
+    def serve(request):
+        if stage == "poll" and request.method == "POST":
+            return httpx.Response(200, json={"data": {"id": "task-1", "status": 1}})
+        return httpx.Response(200, content=body)
+
+    p = D3Policy(
+        "fixture-secret",
+        prompt_version="r2rce-direct-v1",
+        poll_interval=0,
+        client=httpx.Client(transport=httpx.MockTransport(serve)),
+    )
+    camera = Camera(width=8, height=8)
+    result = run_episode(
+        SyntheticEnvironment(camera),
+        p,
+        DepthGuard(camera),
+        "Follow the route and stop.",
+        tmp_path / "bad-body",
+        max_decisions=5,
+        max_steps=5,
+        protocol_id="r2rce_v13_dev",
+    )
+    p.close()
+    assert result["end_reason"] == "service_error" and result["error_code"] == "invalid_response"
+    assert result["decisions"] == 1 and result["executed_steps"] == 0
+    assert result["benchmark_metrics"]["sr"] == result["benchmark_metrics"]["spl"] == 0
+    assert (tmp_path / "bad-body/result.json").is_file()
+    row = json.loads((tmp_path / "bad-body/steps.jsonl").read_text())
+    events = row["response_events"]
+    assert len(events) == (1 if stage == "submission" else 2)
+    assert events[-1]["stage"] == stage
+    assert events[-1]["raw"]["body_sha256"] == hashlib.sha256(body).hexdigest()
+    assert events[-1]["raw"]["http_status"] == 200
+    assert events[0]["request"]["image_count"] == 1
+    assert row["provider_attempts"]["http_attempts"] == len(events)
+    json.dumps(events, allow_nan=False)
+
+
+def test_bad_body_audit_redacts_echoed_credentials(tmp_path):
+    import httpx
+
+    body = b'{"echo":"Bearer fixture-secret"'
+    p = D3Policy(
+        "fixture-secret",
+        prompt_version="r2rce-direct-v1",
+        client=httpx.Client(
+            transport=httpx.MockTransport(lambda r: httpx.Response(200, content=body))
+        ),
+    )
+    from jev_navi.types import ServiceError
+
+    with pytest.raises(ServiceError):
+        p.decide(route_view())
+    serialized = json.dumps(p.response_events, allow_nan=False)
+    assert "fixture-secret" not in serialized
+    assert "REDACTED" in serialized
+    assert p.response_events[0]["raw"]["body_bytes"] == len(body)
+
+
+def test_oversized_bad_body_audit_is_bounded():
+    import httpx
+
+    p = D3Policy(
+        "fixture-secret",
+        client=httpx.Client(
+            transport=httpx.MockTransport(
+                lambda r: httpx.Response(200, content=b"[" + b"x" * 150000)
+            )
+        ),
+    )
+    from jev_navi.types import ServiceError
+
+    with pytest.raises(ServiceError):
+        p.decide(route_view())
+    audit = p.response_events[-1]["raw"]
+    assert audit["body_truncated"]
+    assert len(audit["body_excerpt"].encode()) <= 65536
+
+
+def test_successful_provider_echo_is_redacted_in_all_saved_fields():
+    import httpx
+
+    body = completed()
+    body["data"]["output"]["usage"] = {"echo": "Bearer fixture-secret"}
+    p = D3Policy(
+        "fixture-secret",
+        client=httpx.Client(
+            transport=httpx.MockTransport(lambda r: httpx.Response(200, json=body))
+        ),
+    )
+    decision = p.decide(route_view())
+    serialized = json.dumps([decision.raw, decision.usage, p.response_events], allow_nan=False)
+    assert "fixture-secret" not in serialized
+    assert "REDACTED" in serialized
