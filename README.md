@@ -34,6 +34,13 @@ OFFLINE=1 .venv/bin/jev-navi run --config configs/r2rce_offline.yaml \
 free_quota_confirmed单独设为true不会打开网络。旧探针使用内存预算时会被请求层拒绝。
 完整设计、限制及复现说明见[离线阶段说明](docs/r2rce_offline_2026-10-27.md)。
 
+## 半径外起步的离线正反对照
+
+新增两个公开测试场景的长路线软件夹具，起点距目标约15m。四种控制分别检查过早STOP、
+到达后STOP、到达不STOP及分层推进；full保留安全层，no_guard仅作特权几何控制。
+初始化和失败回合均保存审计，报告不得将预设响应解释为真实模型能力。
+生成与运行步骤见[离线路线对照](docs/offline_route_controls.md)。
+
 ## 环境与快速运行
 
 决策侧使用 Python ≥3.11（本机验证为 3.12.3）。官方 Habitat 的兼容环境独立放在 `.habitat`，通过 JSON 子进程接口通信；无需激活或修改其他项目环境。

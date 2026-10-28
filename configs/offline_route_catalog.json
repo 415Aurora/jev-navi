@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "kind": "privileged_software_fixture",
+  "description": "Frozen public-test-scene targets from the existing survey. No natural-language annotation or model evidence.",
+  "routes": [
+    {
+      "id": "castle-route-control",
+      "scene_id": "skokloster-castle.glb",
+      "instruction": "Follow the prepared route to the endpoint. Stop.",
+      "start_position": [
+        2.7936859130859375,
+        0.1181827187538147,
+        19.877243041992188
+      ],
+      "start_rotation": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "goal_position": [
+        -4.446430683135986,
+        0.049633774906396866,
+        6.574334144592285
+      ]
+    },
+    {
+      "id": "apartment-route-control",
+      "scene_id": "apartment_1.glb",
+      "instruction": "Follow the prepared route to the endpoint. Stop.",
+      "start_position": [
+        5.509199142456055,
+        -1.6002482175827026,
+        6.322789192199707
+      ],
+      "start_rotation": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "goal_position": [
+        4.5380659103393555,
+        -1.6002482175827026,
+        -2.086000442504883
+      ]
+    }
+  ]
+}
