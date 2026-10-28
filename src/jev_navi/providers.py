@@ -1,30 +1,23 @@
 """Remote API boundaries. No provider has access to simulator or evaluation state."""
 
-import base64
-import io
+import hashlib
 import json
 import math
 import time
 from dataclasses import dataclass
 
 import httpx
-from PIL import Image
 
-from .types import Action, Decision, ServiceError
-
-PROMPT_VERSION = "local-navigation-v3-recovery"
-ACTION_DESCRIPTIONS = {
-    "MOVE_FORWARD": "Move forward 0.25 metres without changing heading.",
-    "TURN_LEFT": "Rotate left in place by 15 degrees.",
-    "TURN_RIGHT": "Rotate right in place by 15 degrees.",
-    "STOP": "End this task now, only if the requested local destination has been reached.",
-}
-ACTION_QUESTION = (
-    "Choose the next single action to achieve the local instruction, using the current image "
-    "and any earlier images and executed-action feedback. Images are ordered oldest to newest; "
-    "the final image is current. A rejected action did not move the robot. Do not assume an "
-    "action succeeded. Stop only when the visual destination and instruction are satisfied."
+from .action_context import (
+    ACTION_DESCRIPTIONS,
+    ACTION_QUESTION,
+    PROMPT_VERSION,
+    ROUTE_PROMPT_VERSION,
+    action_context,
+    encode_images,
+    state_text,
 )
+from .types import Action, Decision, ServiceError
 
 
 @dataclass
@@ -44,39 +37,11 @@ class CallBudget:
         self.used += 1
 
 
-def encode_images(view):
-    images = []
-    for frame in view.frames:
-        buffer = io.BytesIO()
-        Image.fromarray(frame.rgb).save(buffer, format="PNG")
-        images.append("data:image/png;base64," + base64.b64encode(buffer.getvalue()).decode())
-    return images
-
-
-def state_text(view, *, image_markers=False):
-    history = [
-        {
-            "proposed": x.proposed.value,
-            "executed": x.executed.value if x.executed else None,
-            "feedback": x.reason,
-            "collided": x.collided,
-        }
-        for x in view.history
-    ]
-    frames = "\n".join(
-        f"Image {i + 1}: step={f.step}" + (" <image>" if image_markers else "")
-        for i, f in enumerate(view.frames)
-    )
-    return (
-        f"Local instruction: {view.instruction}\n{frames}\n"
-        f"Executed-action history: {json.dumps(history, ensure_ascii=False)}"
-        + (f"\nRecovery feedback: {view.recovery_context}" if view.recovery_context else "")
-    )
-
-
 def parse_probabilities(raw):
     if not isinstance(raw, dict) or set(raw) != {x.value for x in Action}:
         raise ServiceError("invalid_response", "Expected one probability for each action")
+    if any(isinstance(v, bool) for v in raw.values()):
+        raise ServiceError("invalid_response", "Boolean action probability")
     try:
         probabilities = {k: float(v) for k, v in raw.items()}
     except (TypeError, ValueError):
@@ -103,6 +68,16 @@ class RemotePolicy:
         self.calls = 0
         self.request_count = 0
         self.response_events = []
+        self.poll_count = 0
+        self.retry_count = 0
+
+    def request_audit(self):
+        return {
+            "http_attempts": self.request_count,
+            "model_submissions": self.calls,
+            "poll_attempts": self.poll_count,
+            "retry_attempts": self.retry_count,
+        }
 
     def close(self):
         if self._owns_client:
@@ -122,6 +97,8 @@ class RemotePolicy:
             self.budget.consume()
             self.request_count += 1
             self.calls += int(inference)
+            self.poll_count += int(method == "GET")
+            self.retry_count += int(attempt > 0)
             try:
                 response = self.client.request(
                     method,
@@ -253,29 +230,68 @@ class StartLuxPolicy(RemotePolicy):
 
 
 class D3Policy(RemotePolicy):
+    app = "vllm-sr/d3-mini"
+    expected_models = {"d3-mini", "vllm-sr/d3-mini"}
+
     def __init__(
-        self, api_key, *, base_url="https://api.inference.sh", poll_interval=0.5, **kwargs
+        self,
+        api_key,
+        *,
+        base_url="https://api.inference.sh",
+        poll_interval=0.5,
+        prompt_version=PROMPT_VERSION,
+        **kwargs,
     ):
+        if prompt_version not in {PROMPT_VERSION, ROUTE_PROMPT_VERSION}:
+            raise ValueError("Unknown direct-action prompt version")
+        if not math.isfinite(poll_interval) or poll_interval < 0:
+            raise ValueError("Poll interval must be finite and nonnegative")
         super().__init__(api_key, **kwargs)
-        if poll_interval < 0:
-            raise ValueError("Poll interval cannot be negative")
         self.base_url = base_url.rstrip("/")
         self.poll_interval = poll_interval
+        self.prompt_version = prompt_version
+
+    def _record_response(self, response, stage, payload=None):
+        data = response.get("data")
+        output = data.get("output") if isinstance(data, dict) else None
+        event = {
+            "request_index": self.request_count,
+            "stage": stage,
+            "raw": {
+                "model": output.get("model") if isinstance(output, dict) else None,
+                "response": response,
+            },
+        }
+        if payload is not None:
+            event["request"] = {
+                "app": payload["app"],
+                "state": payload["input"]["state"],
+                "questions": payload["input"]["choices"],
+                "image_count": len(payload["input"]["images"]),
+                "image_uri_sha256": [
+                    hashlib.sha256(x.encode()).hexdigest() for x in payload["input"]["images"]
+                ],
+                "payload_sha256": hashlib.sha256(
+                    json.dumps(payload, sort_keys=True).encode()
+                ).hexdigest(),
+            }
+        self.response_events.append(event)
 
     def decide(self, view):
         start = time.monotonic()
         deadline = start + self.timeout
+        context = action_context(view, self.prompt_version)
         payload = {
-            "app": "vllm-sr/d3-mini",
+            "app": self.app,
             "input": {
-                "state": state_text(view),
-                "images": encode_images(view),
+                "state": context["state"],
+                "images": context["images"],
                 "choices": [
                     {
                         "id": "action",
-                        "instructions": ACTION_QUESTION,
+                        "instructions": context["question"],
                         "options": [
-                            {"name": k, "description": v} for k, v in ACTION_DESCRIPTIONS.items()
+                            {"name": k, "description": v} for k, v in context["criteria"].items()
                         ],
                     }
                 ],
@@ -285,13 +301,20 @@ class D3Policy(RemotePolicy):
         response = self._request(
             "POST", self.base_url + "/apps/run", payload, inference=True, deadline=deadline
         )
+        self._record_response(response, "submission", payload)
         terminal = response
         try:
             data = response["data"]
-            while data["status"] not in (10, 11, 12, 13):
+            while True:
+                status = data["status"]
+                if type(status) is not int or not 0 <= status <= 13:
+                    raise ValueError()
+                if status in (10, 11, 12, 13):
+                    break
                 task_id = data["id"]
                 if (
                     not isinstance(task_id, str)
+                    or not task_id
                     or not task_id.replace("-", "").replace("_", "").isalnum()
                 ):
                     raise ValueError()
@@ -302,24 +325,36 @@ class D3Policy(RemotePolicy):
                 terminal = self._request(
                     "GET", self.base_url + "/tasks/" + task_id, deadline=deadline
                 )
+                self._record_response(terminal, "poll")
                 data = terminal["data"]
-            if data["status"] != 10:
+            if status != 10:
                 raise ServiceError(
-                    {11: "task_failed", 12: "task_cancelled", 13: "task_rejected"}[data["status"]]
+                    {11: "task_failed", 12: "task_cancelled", 13: "task_rejected"}[status]
                 )
             output = data["output"]
-            probabilities = parse_probabilities(output["choices"]["action"]["probabilities"])
             model = output["model"]
             if not isinstance(model, str) or not model:
                 raise ValueError()
-        except (KeyError, TypeError, ValueError):
+            if model not in self.expected_models:
+                raise ServiceError("model_mismatch", "Provider returned an unexpected model")
+            probabilities = parse_probabilities(output["choices"]["action"]["probabilities"])
+        except (KeyError, TypeError, ValueError, AttributeError, OverflowError):
             raise ServiceError("invalid_response", "Invalid inference.sh task response") from None
-        action = max(Action, key=lambda x: probabilities[x.value])
+        identity = {
+            "requested_app": self.app,
+            "requested_model": "d3-mini",
+            "returned_model": model,
+            "provider_revision": output.get("model_revision", output.get("revision")),
+        }
         return Decision(
-            action,
+            max(Action, key=lambda x: probabilities[x.value]),
             model,
             probabilities,
-            {"submission": response, "terminal": terminal},
+            {"submission": response, "terminal": terminal, "identity": identity},
             time.monotonic() - start,
-            {"input_tokens": output.get("input_tokens")},
+            {
+                "input_tokens": output.get("input_tokens"),
+                "reported_usage": output.get("usage"),
+                "reported_cost": output.get("cost"),
+            },
         )
