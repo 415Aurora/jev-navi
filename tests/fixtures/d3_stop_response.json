@@ -1,0 +1,26 @@
+[
+  {
+    "method": "POST",
+    "path": "/apps/run",
+    "status_code": 200,
+    "json": {
+      "data": {
+        "id": "fixture-stop",
+        "status": 10,
+        "output": {
+          "model": "d3-mini",
+          "choices": {
+            "action": {
+              "probabilities": {
+                "MOVE_FORWARD": 0,
+                "TURN_LEFT": 0,
+                "TURN_RIGHT": 0,
+                "STOP": 1
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+]

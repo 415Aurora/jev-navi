@@ -139,6 +139,10 @@ def make_policy(settings, budget):
         return ScriptedPolicy(settings["actions"])
     if kind == "replay":
         return ReplayPolicy(settings["path"])
+    if kind == "d3_fixture":
+        from .d3_fixture import make_d3_fixture_policy
+
+        return make_d3_fixture_policy(settings, budget)
     if kind in ("startlux_fixture", "startlux_hierarchical_fixture"):
         from .hierarchy import make_fixture_policy
 
@@ -165,6 +169,7 @@ def make_policy(settings, budget):
             os.environ.get("INFERENCE_API_KEY", ""),
             budget=budget,
             base_url=settings.get("base_url", "https://api.inference.sh"),
+            prompt_version=settings.get("prompt_version", PROMPT_VERSION),
         )
     raise ValueError(f"Unsupported policy: {kind}")
 
@@ -290,6 +295,23 @@ def run_suite(config, suite, output):
         raise ValueError("Invalid or duplicate conditions")
     policy_settings = config["policy"]
     kind = policy_settings.get("kind", "scripted")
+    if kind in {"d3", "d3_fixture"} and modern:
+        from .action_context import ROUTE_PROMPT_VERSION
+
+        policy_settings.setdefault("prompt_version", ROUTE_PROMPT_VERSION)
+        if (
+            config["protocol_id"] != "r2rce_v13_dev"
+            or policy_settings["prompt_version"] != ROUTE_PROMPT_VERSION
+            or config.get("recovery", {}).get("mode", "off") != "off"
+        ):
+            raise ValueError(
+                "D3 direct baseline requires the fixed protocol, route prompt and recovery off"
+            )
+        allowed = {"full", "no_guard"} if kind == "d3_fixture" else {"full"}
+        if set(conditions) - allowed:
+            raise ValueError("D3 direct baseline does not enable input or memory ablations")
+        if kind == "d3_fixture" and config["execution"].get("mode") != "offline":
+            raise ValueError("D3 fixture execution must remain offline")
     live = kind in ("startlux", "startlux_hierarchical", "d3")
     if live and config.get("free_quota_confirmed") is not True:
         raise ValueError("Set free_quota_confirmed=true only after checking the provider quota")
@@ -429,9 +451,14 @@ def run_suite(config, suite, output):
                     "task_type": episode["task_type"],
                     "condition": condition,
                     "policy_kind": kind,
-                    "think_mode": policy_settings.get(
-                        "think_mode", "auto" if "hierarchical" in kind else "never"
+                    "think_mode": (
+                        None
+                        if modern and kind in {"d3", "d3_fixture"}
+                        else policy_settings.get(
+                            "think_mode", "auto" if "hierarchical" in kind else "never"
+                        )
                     ),
+                    "reasoning_mode": "direct_choice" if kind in {"d3", "d3_fixture"} else None,
                     "measurement_kind": "model" if live else "fixture",
                     "protocol_id": config["protocol_id"],
                     "task_family": suite.get("task_family", "local"),
@@ -470,6 +497,7 @@ def run_suite(config, suite, output):
                     "unsupported_input",
                     "call_budget",
                     "offline_mode",
+                    "model_mismatch",
                 ):
                     manifest["status"] = "partial_" + result["error_code"]
                     break

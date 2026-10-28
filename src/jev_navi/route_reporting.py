@@ -135,6 +135,15 @@ def summarize_routes(rows, manifest=None):
                 "missing_trajectory_episodes": len(missing_trajectory_episodes),
                 "mean_path_length": _mean([r["path_length"] for r in members]),
                 "collisions": sum(r["collisions"] for r in members),
+                "provider_attempts": {
+                    key: sum(r.get("provider_attempts", {}).get(key, 0) for r in members)
+                    for key in (
+                        "http_attempts",
+                        "model_submissions",
+                        "poll_attempts",
+                        "retry_attempts",
+                    )
+                },
                 "http_requests": sum(r["http_requests"] for r in members),
                 "fixture_requests": sum(r.get("fixture_requests", 0) for r in members),
                 "mean_model_calls": _mean([r.get("model_calls", 0) for r in members]),

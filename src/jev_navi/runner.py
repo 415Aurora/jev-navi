@@ -62,6 +62,12 @@ def run_episode(
     (output / "depth").mkdir()
     start = time.monotonic()
     initial_calls, initial_requests = policy.calls, policy.request_count
+    initial_audit = getattr(policy, "request_audit", lambda: {})()
+
+    def provider_attempts():
+        current = getattr(policy, "request_audit", lambda: {})()
+        return {key: value - initial_audit.get(key, 0) for key, value in current.items()}
+
     is_fixture = bool(getattr(policy, "is_fixture", False))
     frames, history, latencies, models = [], [], [], set()
     blocked_count = consecutive_blocks = decisions = executed_steps = semantic_vetoes = 0
@@ -190,6 +196,7 @@ def run_episode(
             evaluation = env.evaluate(stopped)
             trace.append(evaluation)
             record["evaluation"] = evaluation
+            record["provider_attempts"] = provider_attempts()
             record["model_calls"] = policy.calls - initial_calls
             attempts = policy.request_count - initial_requests
             record["http_requests"] = 0 if is_fixture else attempts
@@ -212,6 +219,7 @@ def run_episode(
         "semantic_vetoes": semantic_vetoes,
         "recovery_attempts": monitor.recovery_attempts,
         "model_calls": policy.calls - initial_calls,
+        "provider_attempts": provider_attempts(),
         "http_requests": 0 if is_fixture else attempts,
         "fixture_requests": attempts if is_fixture else 0,
         "latency_s": latencies,
