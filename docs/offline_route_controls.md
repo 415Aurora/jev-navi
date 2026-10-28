@@ -75,5 +75,5 @@ control-summary.json记录断言结果、各条件真实指标、Git身份、依
 
 冻结软件参考保存于tests/fixtures/native_route_controls.json，记录生成时的干净源码提交、
 脚本/worker/场景哈希及实际GT；授权数据和实验产物继续放在忽略目录。
-最终从干净提交复核的目录为runs/offline-route-controls-verified-20261028；
+最终从干净提交复核的目录为runs/offline-route-controls-final-20261028；
 以其control-summary.json的Git身份、verified、budget和各回合字段作为最终证据。
