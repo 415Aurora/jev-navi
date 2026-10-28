@@ -24,11 +24,13 @@ from .types import Action, Camera
 CONTROL_INSTRUCTION = "Follow the prepared route to the endpoint. Stop."
 
 
-def control_cases(actions):
-    """Finite response fixtures share the actual StartLux request/response parser."""
+def control_cases(actions, *, provider="startlux"):
+    """Finite responses traverse the selected production request/response parser."""
+    if provider not in {"startlux", "d3"}:
+        raise ValueError("Unknown offline control provider")
     if (
         not isinstance(actions, list)
-        or not 2 <= len(actions) <= 499
+        or not 2 <= len(actions) <= (500 if provider == "d3" else 499)
         or actions[-1] != "STOP"
         or "STOP" in actions[:-1]
         or any(action not in {member.value for member in Action} for action in actions)
@@ -36,6 +38,47 @@ def control_cases(actions):
         raise ValueError(
             "Route needs motion then exactly one final STOP, and room for a transition"
         )
+    if provider == "d3":
+
+        def exchanges(sequence):
+            return [
+                {
+                    "method": "POST",
+                    "path": "/apps/run",
+                    "status_code": 200,
+                    "json": {
+                        "data": {
+                            "id": f"fixture-{i}",
+                            "status": 10,
+                            "output": {
+                                "model": "d3-mini",
+                                "choices": {
+                                    "action": {
+                                        "probabilities": {
+                                            a.value: float(a.value == action) for a in Action
+                                        }
+                                    }
+                                },
+                            },
+                        }
+                    },
+                }
+                for i, action in enumerate(sequence)
+            ]
+
+        return [
+            {
+                "name": name,
+                "kind": "d3_fixture",
+                "max_decisions": len(sequence),
+                "responses": exchanges(sequence),
+            }
+            for name, sequence in [
+                ("premature_stop", ["STOP"]),
+                ("arrival_stop", actions),
+                ("arrival_no_stop", actions[:-1]),
+            ]
+        ]
     direct = [{"choices": {"action": action}} for action in actions]
     hierarchy = [{"choices": {"boundary_0": "split"}}]
     hierarchy += [
@@ -78,7 +121,7 @@ def _sha(path):
     return digest.hexdigest()
 
 
-def _validate_catalog(catalog, scenes_root):
+def _validate_catalog(catalog, scenes_root, provider="startlux"):
     if catalog.get("schema_version") != 1 or catalog.get("kind") != "privileged_software_fixture":
         raise ValueError("Expected a privileged software fixture catalog")
     routes = catalog.get("routes")
@@ -107,7 +150,7 @@ def _validate_catalog(catalog, scenes_root):
             raise ValueError("Fixture scene hash does not match the current asset")
         if route.get("instruction") != CONTROL_INSTRUCTION:
             raise ValueError("Control instruction must use the fixed two-stage software fixture")
-        control_cases(route.get("actions"))
+        control_cases(route.get("actions"), provider=provider)
         gt = route.get("gt_locations")
         if not isinstance(gt, list) or len(gt) != len(route["actions"]) + 1:
             raise ValueError(
@@ -139,7 +182,7 @@ def _check_control(row, control, initial_distance):
         raise ValueError(f"Offline control failed: {control}: {metrics}, {row['end_reason']}")
 
 
-def run_route_controls(catalog, output, *, scenes_root, backend="habitat"):
+def run_route_controls(catalog, output, *, scenes_root, backend="habitat", provider="startlux"):
     """Run both guarded diagnostics and explicit unguarded geometric controls.
 
     Guarded deviations remain visible; they never replace the unguarded control
@@ -147,7 +190,9 @@ def run_route_controls(catalog, output, *, scenes_root, backend="habitat"):
     """
     if backend not in {"habitat", "synthetic"}:
         raise ValueError("Unknown fixture environment backend")
-    routes = _validate_catalog(catalog, scenes_root)
+    if provider not in {"startlux", "d3"}:
+        raise ValueError("Unknown offline control provider")
+    routes = _validate_catalog(catalog, scenes_root, provider)
     output = Path(output)
     output.mkdir(parents=True, exist_ok=False)
     write_json(output / "fixture_catalog.json", catalog)
@@ -157,6 +202,11 @@ def run_route_controls(catalog, output, *, scenes_root, backend="habitat"):
         "verified": False,
         "research_evidence": False,
         "backend": backend,
+        "provider": provider,
+        "provider_attempts": {
+            key: 0
+            for key in ("http_attempts", "model_submissions", "poll_attempts", "retry_attempts")
+        },
         "http_requests": 0,
         "fixture_requests": 0,
         "episodes": 0,
@@ -224,7 +274,7 @@ def run_route_controls(catalog, output, *, scenes_root, backend="habitat"):
                 env.close()
             if not math.isfinite(initial_distance) or initial_distance <= 3:
                 raise ValueError("Every control must start strictly outside the 3m success radius")
-            for case in control_cases(route["actions"]):
+            for case in control_cases(route["actions"], provider=provider):
                 case_folder = folder / case["name"]
                 case_folder.mkdir()
                 responses = case_folder / "responses.json"
@@ -235,7 +285,11 @@ def run_route_controls(catalog, output, *, scenes_root, backend="habitat"):
                     "policy": {
                         "kind": case["kind"],
                         "responses": str(responses.resolve()),
-                        "think_mode": "auto",
+                        **(
+                            {"prompt_version": "r2rce-direct-v1"}
+                            if provider == "d3"
+                            else {"think_mode": "auto"}
+                        ),
                     },
                     "run": {
                         "max_decisions": case["max_decisions"],
@@ -263,6 +317,10 @@ def run_route_controls(catalog, output, *, scenes_root, backend="habitat"):
                     report["episodes"] += 1
                     report["http_requests"] += row["http_requests"]
                     report["fixture_requests"] += row["fixture_requests"]
+                    for key in report["provider_attempts"]:
+                        report["provider_attempts"][key] += row.get("provider_attempts", {}).get(
+                            key, 0
+                        )
                     report["guard_deviations"] += int(guarded_deviation)
                     entry = {
                         "route": route["id"],
@@ -277,6 +335,7 @@ def run_route_controls(catalog, output, *, scenes_root, backend="habitat"):
                         "end_reason": row["end_reason"],
                         "http_requests": row["http_requests"],
                         "fixture_requests": row["fixture_requests"],
+                        "provider_attempts": row.get("provider_attempts", {}),
                         "error_code": row["error_code"],
                         "guard_deviation": guarded_deviation,
                         "assertion_passed": None if guarded_deviation else False,
@@ -300,7 +359,9 @@ def run_route_controls(catalog, output, *, scenes_root, backend="habitat"):
                         entry["assertion_passed"] = True
                     if row["metadata"]["condition"] == "no_guard":
                         report["geometry_controls_passed"] += 1
-        report["verified"] = report["geometry_controls_passed"] == len(routes) * 4
+        report["verified"] = report["geometry_controls_passed"] == len(routes) * (
+            3 if provider == "d3" else 4
+        )
     except BaseException as error:
         failure = error
         report["verified"] = False
@@ -353,6 +414,7 @@ def main(argv=None):
     parser.add_argument("--scenes-root", required=True)
     parser.add_argument("--output", required=True)
     parser.add_argument("--backend", choices=["habitat", "synthetic"], default="habitat")
+    parser.add_argument("--provider", choices=["startlux", "d3"], default="startlux")
     args = parser.parse_args(argv)
     try:
         report = run_route_controls(
@@ -360,6 +422,7 @@ def main(argv=None):
             args.output,
             scenes_root=args.scenes_root,
             backend=args.backend,
+            provider=args.provider,
         )
         print(
             json.dumps(

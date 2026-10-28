@@ -41,6 +41,12 @@ free_quota_confirmed单独设为true不会打开网络。旧探针使用内存�
 初始化和失败回合均保存审计，报告不得将预设响应解释为真实模型能力。
 生成与运行步骤见[离线路线对照](docs/offline_route_controls.md)。
 
+## d3-mini 直接动作基线
+
+研究对象收敛为d3-mini，新增完整路线提示词、生产适配器的HTTP交换夹具与独立请求计数。
+当前只执行零真实模型请求的软件验收；Qwen部署和正式实验留到后续。
+固定协议、运行命令和研究限制见[d3-mini方案](docs/d3_mini_direct_baseline.md)。
+
 ## 环境与快速运行
 
 决策侧使用 Python ≥3.11（本机验证为 3.12.3）。官方 Habitat 的兼容环境独立放在 `.habitat`，通过 JSON 子进程接口通信；无需激活或修改其他项目环境。
