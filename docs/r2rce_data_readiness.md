@@ -27,3 +27,8 @@ source.kind=official只是输入者的声明。declared_official_data_ready不�
 
 官方资料：[VLN-CE格式与GT](https://jacobkrantz.github.io/vlnce/data)、
 [MP3D访问流程](https://niessner.github.io/Matterport/)。
+
+## 2026-10-28 接入状态
+
+官方v1-3标注和dense GT已下载、校验并导入；MP3D申请等待审核，场景尚未下载。
+四个split的文件预检均明确报告未就绪，详情见[标注与GT接入记录](r2rce_data_acquisition_2026-10-28.md)。
