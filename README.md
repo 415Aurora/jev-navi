@@ -169,3 +169,5 @@ OFFLINE=1 .venv/bin/python -m pytest -q
 研究目标、阶段边界和后续路线见 [研究协议](docs/research_protocol.md)。本项目没有导航训练或权重更新流程。
 
 停止判断专项结果见[停止诊断](docs/stop_diagnostic_2026-10-27.md)：两次STOP后均有可行路线，静态历史对照发现执行反馈影响停止倾向；累计483次请求，尚无新的闭环成功证据。
+
+开发任务清单与文件预检：见 [24条train任务冻结说明](docs/r2rce_task_preflight.md)。冻结定义不会授权真实调用或证明场景可导航。

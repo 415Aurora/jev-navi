@@ -1,0 +1,185 @@
+{
+  "schema_version": 1,
+  "selection_version": "train-scene-trajectory-sha256-v1",
+  "seed": "jev-train-dev-v1",
+  "scenes": 4,
+  "per_scene": 6,
+  "purpose": "train_development",
+  "protocol_id": "r2rce_v13_dev",
+  "source_identity": {
+    "kind": "official",
+    "split": "train",
+    "sha256": "f411066b53f96d1241c045fd05a6a9e01b484c2ed9369f5b6f41806969056a34",
+    "gt_sha256": "b63fa10e5c57d1b80b241c49bdeddc3d481bbe54b41ca0d59f9584c10da7bd5d"
+  },
+  "tasks": [
+    {
+      "id": "8476",
+      "repeat_id": 0,
+      "scene_id": "mp3d/759xd9YjKW5/759xd9YjKW5.glb",
+      "trajectory_id": "5673",
+      "definition_sha256": "16343d44aca623318959bf41c8347ca5aa48e3ba36dbe135db2cc226732edaaf"
+    },
+    {
+      "id": "1437",
+      "repeat_id": 0,
+      "scene_id": "mp3d/759xd9YjKW5/759xd9YjKW5.glb",
+      "trajectory_id": "896",
+      "definition_sha256": "f2b82adfc5a7b04c0d53a55e8835909e531c3096cc332b71d92cd3ab0615a69d"
+    },
+    {
+      "id": "9717",
+      "repeat_id": 0,
+      "scene_id": "mp3d/759xd9YjKW5/759xd9YjKW5.glb",
+      "trajectory_id": "6518",
+      "definition_sha256": "df62ffe7d16dc27ae895bf7d9c3a549ea9a230b6967f05559a6ded5e5982876d"
+    },
+    {
+      "id": "4218",
+      "repeat_id": 0,
+      "scene_id": "mp3d/759xd9YjKW5/759xd9YjKW5.glb",
+      "trajectory_id": "2779",
+      "definition_sha256": "8f836fb44121a8a8fe99283904317cc9ff2065887d126e643919edb568ebc25e"
+    },
+    {
+      "id": "5257",
+      "repeat_id": 0,
+      "scene_id": "mp3d/759xd9YjKW5/759xd9YjKW5.glb",
+      "trajectory_id": "3469",
+      "definition_sha256": "6bb956084f0e53259957de9df6af0bf28d84334b30756df4b10968095b8c259a"
+    },
+    {
+      "id": "483",
+      "repeat_id": 0,
+      "scene_id": "mp3d/759xd9YjKW5/759xd9YjKW5.glb",
+      "trajectory_id": "323",
+      "definition_sha256": "488721530ca20d147c5c8869d07f3025566d314662eeb1c163dcfdba16af2ee0"
+    },
+    {
+      "id": "56",
+      "repeat_id": 0,
+      "scene_id": "mp3d/GdvgFV5R1Z5/GdvgFV5R1Z5.glb",
+      "trajectory_id": "44",
+      "definition_sha256": "8b2d04979f3e6f1e73e5a31f7a904608a61cb3a53dd7658f688abe633115d7e0"
+    },
+    {
+      "id": "1746",
+      "repeat_id": 0,
+      "scene_id": "mp3d/GdvgFV5R1Z5/GdvgFV5R1Z5.glb",
+      "trajectory_id": "1118",
+      "definition_sha256": "6a69a8fd5f9f71b6c6faeef8f73023e778bd19d8b2c7a93c97d621cfd45a63de"
+    },
+    {
+      "id": "4116",
+      "repeat_id": 0,
+      "scene_id": "mp3d/GdvgFV5R1Z5/GdvgFV5R1Z5.glb",
+      "trajectory_id": "2705",
+      "definition_sha256": "8f1665691c996ff519fd0baca4b36e0d884746c54dbf49650a49caa297703439"
+    },
+    {
+      "id": "6536",
+      "repeat_id": 0,
+      "scene_id": "mp3d/GdvgFV5R1Z5/GdvgFV5R1Z5.glb",
+      "trajectory_id": "4309",
+      "definition_sha256": "9b3c0d09a69784e10241d9c5e709b66e3bdf50a3486b6a83e5f4d5859c27590d"
+    },
+    {
+      "id": "9559",
+      "repeat_id": 0,
+      "scene_id": "mp3d/GdvgFV5R1Z5/GdvgFV5R1Z5.glb",
+      "trajectory_id": "6398",
+      "definition_sha256": "2b0eb579b68ea5382a33b83d244e6243296d5026d3561042d86c40bce973c920"
+    },
+    {
+      "id": "9433",
+      "repeat_id": 0,
+      "scene_id": "mp3d/GdvgFV5R1Z5/GdvgFV5R1Z5.glb",
+      "trajectory_id": "6327",
+      "definition_sha256": "6eda9bea2a22d47c374ee9070e7639956d904950010121f1921b6df65364e539"
+    },
+    {
+      "id": "274",
+      "repeat_id": 0,
+      "scene_id": "mp3d/SN83YJsR3w2/SN83YJsR3w2.glb",
+      "trajectory_id": "179",
+      "definition_sha256": "7e935cb813a31187e21e16711c3351e760d964debf6d1473c9375be4daea287c"
+    },
+    {
+      "id": "1065",
+      "repeat_id": 0,
+      "scene_id": "mp3d/SN83YJsR3w2/SN83YJsR3w2.glb",
+      "trajectory_id": "675",
+      "definition_sha256": "205212f382f22a36df5bef834773a3970fee20a48baa4bd9d49da9a430b69d36"
+    },
+    {
+      "id": "10294",
+      "repeat_id": 0,
+      "scene_id": "mp3d/SN83YJsR3w2/SN83YJsR3w2.glb",
+      "trajectory_id": "6930",
+      "definition_sha256": "d34f19f4b83f5ae5f57c5ed911e81e8f0903b14dc45ffec1473f9071e8e357c6"
+    },
+    {
+      "id": "8231",
+      "repeat_id": 0,
+      "scene_id": "mp3d/SN83YJsR3w2/SN83YJsR3w2.glb",
+      "trajectory_id": "5506",
+      "definition_sha256": "767ca34d94fd649330b52dff5f26d69e82575d1d02a90645d98c96280a8beb35"
+    },
+    {
+      "id": "5907",
+      "repeat_id": 0,
+      "scene_id": "mp3d/SN83YJsR3w2/SN83YJsR3w2.glb",
+      "trajectory_id": "3887",
+      "definition_sha256": "0186a0619ae0e79f1cf8140d6882355d0e80b1f035dfe4ec5e42d0cf00fce117"
+    },
+    {
+      "id": "5263",
+      "repeat_id": 0,
+      "scene_id": "mp3d/SN83YJsR3w2/SN83YJsR3w2.glb",
+      "trajectory_id": "3471",
+      "definition_sha256": "49e4fc5f16a6f2431a6ce315b4654200c2d51121b73b34d0df114e58445ebdbf"
+    },
+    {
+      "id": "6704",
+      "repeat_id": 0,
+      "scene_id": "mp3d/aayBHfsNo7d/aayBHfsNo7d.glb",
+      "trajectory_id": "4421",
+      "definition_sha256": "184dcc69d4536b22755ee7600bc7f575df4a4ea7241949e1712336d36e09c46c"
+    },
+    {
+      "id": "2164",
+      "repeat_id": 0,
+      "scene_id": "mp3d/aayBHfsNo7d/aayBHfsNo7d.glb",
+      "trajectory_id": "1401",
+      "definition_sha256": "b566d92642b5a545424e93578d1dd8506fd6eb7947762f52eae9d0fa9fed0b24"
+    },
+    {
+      "id": "4090",
+      "repeat_id": 0,
+      "scene_id": "mp3d/aayBHfsNo7d/aayBHfsNo7d.glb",
+      "trajectory_id": "2680",
+      "definition_sha256": "cc64112f1aae02d887aa293c2f0172383347805f3e67beb0ea578b8b57ac66a7"
+    },
+    {
+      "id": "982",
+      "repeat_id": 0,
+      "scene_id": "mp3d/aayBHfsNo7d/aayBHfsNo7d.glb",
+      "trajectory_id": "624",
+      "definition_sha256": "056941ea7e20541634518459d94dd5aea821fa27b3d78fb39df9e69da4a05747"
+    },
+    {
+      "id": "2679",
+      "repeat_id": 0,
+      "scene_id": "mp3d/aayBHfsNo7d/aayBHfsNo7d.glb",
+      "trajectory_id": "1746",
+      "definition_sha256": "40a4f77950570a2bb00180991052742f0d5750d76ee5911a38534892efbe722b"
+    },
+    {
+      "id": "10586",
+      "repeat_id": 0,
+      "scene_id": "mp3d/aayBHfsNo7d/aayBHfsNo7d.glb",
+      "trajectory_id": "7144",
+      "definition_sha256": "3b24b462f2479312d1a0bf6de2158a7a7596c206da463c21b99b576d13839fbc"
+    }
+  ]
+}
