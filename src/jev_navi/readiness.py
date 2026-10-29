@@ -38,7 +38,7 @@ def _scene_available(path):
         return False
 
 
-def check_r2rce(suite, *, require_ndtw=False):
+def check_r2rce(suite, *, require_ndtw=False, selection=None):
     """Check current files rather than trusting a cached missing-assets list.
 
     Source kind is a user declaration; matching local hashes does not prove
@@ -58,8 +58,29 @@ def check_r2rce(suite, *, require_ndtw=False):
     integrity = {"episodes": _integrity(source.get("path"), source.get("sha256"))}
     if source.get("gt_path") is not None:
         integrity["gt"] = _integrity(source["gt_path"], source.get("gt_sha256"))
+    selection_check = None
+    if selection is not None or "selection" in suite:
+        from .task_selection import verify_selection
+
+        try:
+            selection_check = verify_selection(
+                suite, selection if selection is not None else suite["selection"]
+            )
+        except (ValueError, OSError) as error:
+            selection_check = {"verified": False, "reason": str(error)}
+    inventory = [
+        {
+            "scene_id": scene_id,
+            "episodes": sum(r["scene_id"] == scene_id for r in rows),
+            "asset_available": _scene_available(
+                next(r["scene"] for r in rows if r["scene_id"] == scene_id)
+            ),
+        }
+        for scene_id in sorted({r["scene_id"] for r in rows})
+    ]
     ready = bool(
-        rows
+        (selection_check is None or selection_check["verified"])
+        and rows
         and not missing
         and not unevaluable
         and all(check["verified"] for check in integrity.values())
@@ -68,6 +89,11 @@ def check_r2rce(suite, *, require_ndtw=False):
     return {
         "ready": ready,
         "source_kind": source["kind"],
+        "selection_integrity": selection_check,
+        "unique_trajectories": len(
+            {(r["scene_id"], r["trajectory_id"]) for r in rows if r["trajectory_id"] is not None}
+        ),
+        "scene_inventory": inventory,
         "declared_official_data_ready": ready and source["kind"] == "official",
         "episodes": len(rows),
         "scenes": len(scenes),

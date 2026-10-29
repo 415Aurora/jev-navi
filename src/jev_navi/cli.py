@@ -101,13 +101,56 @@ def main(argv=None):
     )
     p.add_argument("--suite", required=True)
     p.add_argument("--require-ndtw", action="store_true")
+    p.add_argument("--selection", help="Verify against a separately frozen manifest")
+    p = commands.add_parser(
+        "freeze-r2rce", help="Freeze deterministic train development tasks; no model calls"
+    )
+    p.add_argument("--suite", required=True)
+    p.add_argument("--output", required=True)
+    p.add_argument("--manifest", required=True)
+    p.add_argument("--scenes", type=int, default=4)
+    p.add_argument("--per-scene", type=int, default=6)
+    p.add_argument("--seed", default="jev-train-dev-v1")
     commands.add_parser("budget-status", help="Show shared phase accounting, no model calls")
     args = parser.parse_args(argv)
     try:
-        if args.command == "check-r2rce":
+        if args.command == "freeze-r2rce":
+            from .task_selection import freeze_tasks
+
+            output, manifest_path = Path(args.output).resolve(), Path(args.manifest).resolve()
+            if output == manifest_path or output.exists() or manifest_path.exists():
+                raise ValueError("Freeze outputs must be different, new paths")
+            selected, manifest = freeze_tasks(
+                _load(args.suite), scenes=args.scenes, per_scene=args.per_scene, seed=args.seed
+            )
+            created = []
+            try:
+                for path, value in ((output, selected), (manifest_path, manifest)):
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    with path.open("x", encoding="utf-8") as handle:
+                        created.append(path)
+                        handle.write(
+                            json.dumps(value, ensure_ascii=False, indent=2, allow_nan=False) + "\n"
+                        )
+            except OSError:
+                for path in created:
+                    path.unlink()
+                raise
+            result = {
+                "suite": str(output),
+                "manifest": str(manifest_path),
+                "episodes": len(selected["episodes"]),
+                "http_requests": 0,
+                "note": "Definitions frozen; run check-r2rce separately for asset readiness.",
+            }
+        elif args.command == "check-r2rce":
             from .readiness import check_r2rce
 
-            result = check_r2rce(_load(args.suite), require_ndtw=args.require_ndtw)
+            result = check_r2rce(
+                _load(args.suite),
+                require_ndtw=args.require_ndtw,
+                selection=_load(args.selection) if args.selection else None,
+            )
             print(json.dumps(result, ensure_ascii=False, indent=2))
             return 0 if result["ready"] else 2
         elif args.command == "prepare-r2rce":

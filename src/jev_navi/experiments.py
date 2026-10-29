@@ -283,6 +283,10 @@ def run_suite(config, suite, output):
     config = resolve_config(config)
     validate_suite(suite, diagnostic=config.get("diagnostic", False))
     modern = suite.get("schema_version") == 2
+    if modern and "selection" in suite:
+        from .task_selection import verify_selection
+
+        verify_selection(suite, suite["selection"])
     if modern and config["protocol_id"] == "local_v1":
         raise ValueError("R2R-CE suite requires an explicitly selected R2R-CE protocol")
     if not modern and config["protocol_id"] != "local_v1":
