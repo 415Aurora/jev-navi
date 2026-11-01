@@ -1,0 +1,178 @@
+{
+  "source_url": "https://kaldir.vc.cit.tum.de/matterport/v1/tasks/mp3d_habitat.zip",
+  "official_script_sha256": "37bc39c84c72c1eafeb96f9290db0410217894b3858ee992cbaafb3a265c09ec",
+  "mode": "selected HTTP ranges; sparse file is NOT a complete release archive",
+  "files": [
+    {
+      "path": "data/scene_datasets/mp3d/SN83YJsR3w2/SN83YJsR3w2_semantic.ply",
+      "bytes": 396733390,
+      "sha256": "bc119aa94410127d0825779d5bb2c5b7063deaa19dbb0acb1ac8a27bf7ed04ca",
+      "zip_crc32": 281428837,
+      "range": [
+        1344160103,
+        1597648334
+      ]
+    },
+    {
+      "path": "data/scene_datasets/mp3d/SN83YJsR3w2/SN83YJsR3w2.glb",
+      "bytes": 166365400,
+      "sha256": "5bb59d8b808da51913181b83f4f112e0162158e8c06eefeea87a4e6ccaa02525",
+      "zip_crc32": 740716612,
+      "range": [
+        1597582827,
+        1758827945
+      ]
+    },
+    {
+      "path": "data/scene_datasets/mp3d/SN83YJsR3w2/SN83YJsR3w2.house",
+      "bytes": 21507289,
+      "sha256": "acf263786ea83e68e6ba8c2c2a19d442eab0c8f5e407c6af91cb7b68184bcf5a",
+      "zip_crc32": 1046767045,
+      "range": [
+        1758762438,
+        1766143828
+      ]
+    },
+    {
+      "path": "data/scene_datasets/mp3d/SN83YJsR3w2/SN83YJsR3w2.navmesh",
+      "bytes": 224720,
+      "sha256": "3a182ac907047690f2134b0525ea9805f1d709a38cfd7a3857bb4c1b38f015c3",
+      "zip_crc32": 1277894931,
+      "range": [
+        1766078321,
+        1766221235
+      ]
+    },
+    {
+      "path": "data/scene_datasets/mp3d/759xd9YjKW5/759xd9YjKW5_semantic.ply",
+      "bytes": 153302109,
+      "sha256": "dfdb9bbc33dc8568eab06cc9a328135dcad582c9748fe2bae8849ca0ca13b8bd",
+      "zip_crc32": 1029680245,
+      "range": [
+        5816974815,
+        5915032265
+      ]
+    },
+    {
+      "path": "data/scene_datasets/mp3d/759xd9YjKW5/759xd9YjKW5.house",
+      "bytes": 7536915,
+      "sha256": "58ded70851a6601575f63830edf27aa8c0aac2c5ebe24f90df76fedc173b74a7",
+      "zip_crc32": 188723960,
+      "range": [
+        5914966758,
+        5917616169
+      ]
+    },
+    {
+      "path": "data/scene_datasets/mp3d/759xd9YjKW5/759xd9YjKW5.glb",
+      "bytes": 57184696,
+      "sha256": "259be97f8c7b1e7688085962323d21c840c43eef36808955bf8a907a41c7af03",
+      "zip_crc32": 3529603715,
+      "range": [
+        5917550662,
+        5972412935
+      ]
+    },
+    {
+      "path": "data/scene_datasets/mp3d/759xd9YjKW5/759xd9YjKW5.navmesh",
+      "bytes": 87444,
+      "sha256": "ffeb013900d55ef7cc227c9ebbf051b98181a6146dd51cac1225fe89e255a379",
+      "zip_crc32": 1042504028,
+      "range": [
+        5972347428,
+        5972443029
+      ]
+    },
+    {
+      "path": "data/scene_datasets/mp3d/aayBHfsNo7d/aayBHfsNo7d.glb",
+      "bytes": 35721120,
+      "sha256": "0e887f366a3543acc3712f9935a3d183f022c18a2c84fdd49f8eb5f76333fa9f",
+      "zip_crc32": 798718805,
+      "range": [
+        8408661297,
+        8442507923
+      ]
+    },
+    {
+      "path": "data/scene_datasets/mp3d/aayBHfsNo7d/aayBHfsNo7d_semantic.ply",
+      "bytes": 144228585,
+      "sha256": "7e77231912004188628bfd00b6131c0d05aa348fab3aad74f27138af5d0cf8e5",
+      "zip_crc32": 4104226231,
+      "range": [
+        8442442416,
+        8536230893
+      ]
+    },
+    {
+      "path": "data/scene_datasets/mp3d/aayBHfsNo7d/aayBHfsNo7d.house",
+      "bytes": 6235750,
+      "sha256": "54be3105c63cb62a94c1e0330135bb4ebce6d27b98ddc9bfca4822e42e35f70a",
+      "zip_crc32": 398226824,
+      "range": [
+        8536165386,
+        8538395204
+      ]
+    },
+    {
+      "path": "data/scene_datasets/mp3d/aayBHfsNo7d/aayBHfsNo7d.navmesh",
+      "bytes": 61356,
+      "sha256": "1bde89aa1fa956742f7505119e88fd624f9bda680c03ea3433b3ff6fc66b6d52",
+      "zip_crc32": 2273722258,
+      "range": [
+        8538329697,
+        8538416566
+      ]
+    },
+    {
+      "path": "data/scene_datasets/mp3d/GdvgFV5R1Z5/GdvgFV5R1Z5.navmesh",
+      "bytes": 8448,
+      "sha256": "366126e6581dff0952b582d9350a4cf7a8548aaea6cda9cc3e11562ac6a4475b",
+      "zip_crc32": 4129031648,
+      "range": [
+        8538351134,
+        8538419868
+      ]
+    },
+    {
+      "path": "data/scene_datasets/mp3d/GdvgFV5R1Z5/GdvgFV5R1Z5.house",
+      "bytes": 1934745,
+      "sha256": "f83616edcfe2eb92d71181e8ea676128cf6b96b28a697ada84f6f3ddda16525f",
+      "zip_crc32": 3069228072,
+      "range": [
+        8538354361,
+        8539107875
+      ]
+    },
+    {
+      "path": "data/scene_datasets/mp3d/GdvgFV5R1Z5/GdvgFV5R1Z5_semantic.ply",
+      "bytes": 32702659,
+      "sha256": "fc5f6d54b6a6bf679cf2f6de718465e49a3b5812a277c9a03401f9bdd7fefab0",
+      "zip_crc32": 2897673692,
+      "range": [
+        8539042368,
+        8560885415
+      ]
+    },
+    {
+      "path": "data/scene_datasets/mp3d/GdvgFV5R1Z5/GdvgFV5R1Z5.glb",
+      "bytes": 18463728,
+      "sha256": "256c5bd09dd2f2519009e9618a97c7d8d9e8f657436af81b29a722b0025b8717",
+      "zip_crc32": 107762379,
+      "range": [
+        8560819908,
+        8576972479
+      ]
+    }
+  ],
+  "complete": true,
+  "native_check": {
+    "episodes": 24,
+    "passed": 24,
+    "report": "data/mp3d-download-source/native-readiness.json",
+    "report_sha256": "8cd3002996b8aeb0704f9a852043bf2b280332c17fa73bda9dac180c1b0bbeea",
+    "navigation_code_base": "262b229bf5f84b931a294bfb8720b90639b4b278",
+    "geometry_scope": "reset, RGB/depth shape, navigable start and finite geodesic distance; no model navigation",
+    "http_requests": 0
+  },
+  "ledger_sha256": "8af816dd086a66b79f97eb9351b8fd683e596b51650f4dab34cf1fb878f63c6d"
+}
