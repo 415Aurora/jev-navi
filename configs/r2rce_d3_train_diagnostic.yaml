@@ -1,6 +1,6 @@
-# User approved <=200 HTTP attempts, two train tasks, <=100 decisions each.
+# Completed diagnostic; phase closed. Original live config is preserved in run manifest.
 protocol_id: r2rce_v13_dev
-free_quota_confirmed: true
+free_quota_confirmed: false
 environment:
   backend: habitat
 safety:
@@ -19,7 +19,7 @@ run:
 conditions:
 - full
 execution:
-  mode: live
+  mode: offline
   phase_id: d3-train-diagnostic-20261103
   phase_limit: 200
   ledger: runs/request-ledger.sqlite3
