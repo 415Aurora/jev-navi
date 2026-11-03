@@ -1,0 +1,25 @@
+# User approved <=200 HTTP attempts, two train tasks, <=100 decisions each.
+protocol_id: r2rce_v13_dev
+free_quota_confirmed: true
+environment:
+  backend: habitat
+safety:
+  margin_m: 0.1
+recovery:
+  mode: 'off'
+policy:
+  kind: d3
+  prompt_version: r2rce-direct-v1
+  provider: official
+run:
+  max_decisions: 100
+  max_steps: 500
+  call_limit: 200
+  seed: 17
+conditions:
+- full
+execution:
+  mode: live
+  phase_id: d3-train-diagnostic-20261103
+  phase_limit: 200
+  ledger: runs/request-ledger.sqlite3
