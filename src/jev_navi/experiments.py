@@ -165,6 +165,19 @@ def make_policy(settings, budget):
             ),
         )
     if kind == "d3":
+        provider = settings.get("provider", "inference_sh")
+        if provider == "official":
+            from .official_d3 import OfficialD3Policy
+
+            if "base_url" in settings:
+                raise ValueError("Official provider uses a fixed endpoint; omit base_url")
+            return OfficialD3Policy(
+                os.environ.get("DECISION_API_KEY", ""),
+                budget=budget,
+                prompt_version=settings.get("prompt_version", "r2rce-direct-v1"),
+            )
+        if provider != "inference_sh":
+            raise ValueError("Unsupported d3 provider")
         return D3Policy(
             os.environ.get("INFERENCE_API_KEY", ""),
             budget=budget,

@@ -4,7 +4,9 @@ import json
 import os
 from pathlib import Path
 
-ALLOWED_KEYS = frozenset({"BAMBOO_API_KEY", "STARTLUX_ENDPOINT", "INFERENCE_API_KEY"})
+ALLOWED_KEYS = frozenset(
+    {"BAMBOO_API_KEY", "STARTLUX_ENDPOINT", "INFERENCE_API_KEY", "DECISION_API_KEY"}
+)
 BAMBOO_ENDPOINT = "https://api.bamboonode.dev/v1/decisions"
 
 

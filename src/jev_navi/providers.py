@@ -97,7 +97,7 @@ class RemotePolicy:
             raise ServiceError(
                 "offline_mode", "Real HTTP requires an explicitly enabled persistent phase budget"
             )
-        for attempt in range(2):
+        for attempt in range(getattr(self, "attempt_limit", 2)):
             remaining = self.timeout if deadline is None else deadline - time.monotonic()
             if remaining <= 0:
                 raise ServiceError("timeout")

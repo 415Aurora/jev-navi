@@ -1,0 +1,25 @@
+# Official API template; live inference remains disabled.
+protocol_id: r2rce_v13_dev
+free_quota_confirmed: false
+environment:
+  backend: habitat
+safety:
+  margin_m: 0.1
+recovery:
+  mode: 'off'
+policy:
+  kind: d3
+  prompt_version: r2rce-direct-v1
+  provider: official
+run:
+  max_decisions: 500
+  max_steps: 500
+  call_limit: 500
+  seed: 17
+conditions:
+- full
+execution:
+  mode: offline
+  phase_id: r2rce-offline-v1
+  phase_limit: 0
+  ledger: runs/request-ledger.sqlite3
