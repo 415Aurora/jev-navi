@@ -2,11 +2,23 @@
 
 **Research portfolio summary:** Exploring frozen multimodal decision models for closed-loop, language-conditioned local navigation in Habitat. This is an exploratory research testbed, **not** a validated R2R-CE navigation benchmark.
 
+## Navigation system diagram
+
+![Language and RGB history, frozen decision-model action proposal, depth-safety interception, Habitat execution and evaluation](docs/visuals/navigation-loop.svg)
+
+*Conceptual view of the implemented research testbed, not a successful navigation trajectory.*
+
 **Research question:** Can a frozen multimodal decision model propose useful actions from language instructions, recent RGB observations and action feedback, when a depth-based safety layer independently checks motion feasibility?
 
 **Implementation:** Action proposal adapters, metric-depth safety interception, isolated Habitat execution, reproducible task manifests, trajectory logging, replay and failure analysis. See [research protocol](docs/research_protocol.md) and [pilot report](docs/startlux_pilot_2026-10-27.md).
 
 **Observed results (2026-10-27):** Initial six-episode model pilot: 0/6 successes. After the documented downward depth-safety adjustment, collisions in the diagnostic runs decreased from 25 to 0 while success remained 0/6. These small, task-specific comparisons do **not** establish general navigation improvement. See [depth diagnostic](docs/depth_diagnostic_2026-10-27.md) and [loop experiments](docs/loop_experiment_2026-10-27.md).
+
+## Diagnostic visualization
+
+![Six-episode depth diagnostic showing collisions 25 to 0 and unchanged navigation success 0 out of 6](docs/visuals/depth-diagnostic.svg)
+
+*The 2026-10-27 engineering comparison used the same six tasks; it is not an independent benchmark, and repeated collisions are correlated. [Full diagnostic and protocol](docs/depth_diagnostic_2026-10-27.md).*
 
 **Limitations:** No reported full R2R-CE score, zero-shot generalization claim or G1 deployment result. Scene count and trial count are limited. Reproduction of live-model trials requires provider access; synthetic/replay smoke tests should be reported separately.
 
