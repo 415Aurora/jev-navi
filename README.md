@@ -1,8 +1,21 @@
 # JEV-Navi：冻结多模态决策模型的局部导航实验
 
+**Research portfolio summary:** Exploring frozen multimodal decision models for closed-loop, language-conditioned local navigation in Habitat. This is an exploratory research testbed, **not** a validated R2R-CE navigation benchmark.
+
+**Research question:** Can a frozen multimodal decision model propose useful actions from language instructions, recent RGB observations and action feedback, when a depth-based safety layer independently checks motion feasibility?
+
+**Implementation:** Action proposal adapters, metric-depth safety interception, isolated Habitat execution, reproducible task manifests, trajectory logging, replay and failure analysis. See [research protocol](docs/research_protocol.md) and [pilot report](docs/startlux_pilot_2026-10-27.md).
+
+**Observed results (2026-10-27):** Initial six-episode model pilot: 0/6 successes. After the documented downward depth-safety adjustment, collisions in the diagnostic runs decreased from 25 to 0 while success remained 0/6. These small, task-specific comparisons do **not** establish general navigation improvement. See [depth diagnostic](docs/depth_diagnostic_2026-10-27.md) and [loop experiments](docs/loop_experiment_2026-10-27.md).
+
+**Limitations:** No reported full R2R-CE score, zero-shot generalization claim or G1 deployment result. Scene count and trial count are limited. Reproduction of live-model trials requires provider access; synthetic/replay smoke tests should be reported separately.
+
+---
+
+
 本项目实现语言目标 → RGB 与短历史 → 冻结模型动作提议 → 米制深度拦截 → Habitat 单步执行的闭环。首阶段研究局部语义导航；完整 VLN、R2R-CE 和 G1/SONIC 迁移留待后续验证。
 
-**脚本策略、动作回放和合成环境只用于软件验证，不能当作模型导航结果。当前没有真实模型 API 实验结果。**
+**证据边界：** 脚本策略、动作回放和合成环境仅用于软件验证，不视为模型导航结果。2026-10-27 已记录真实 StartLux API pilot（6 回合成功 0/6），但这不构成完整 VLN-CE benchmark 或有效导航策略的证据。见下文诊断记录。
 
 ## 环境与快速运行
 
